@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>Inbox</title>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript" src="jquery-3.2.0.js"></script>
+		<script type="text/javascript" src="javascript.js"></script>
+		<script>
+			$(function(){
+				$.ajax({
+				  url: "mail_navigation.html",
+				  context: document.body,
+				  contentType:"text/html",
+				  success: function(response){
+					$("body").html(response);
+					getMails();
+				  }
+				});
+			});
+		</script>
+	</head>
+	<body>
+	
+	</body>
+</html>

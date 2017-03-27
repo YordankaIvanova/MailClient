@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	
+	<body>
+	
+		<div id="heading-bg-img-wrapper"></div>
+		
+		<header>
+			<img id="logo" src="odoo_logo.png" alt="Logo">
+			<p id="name">User Name</p>
+			<a id="exit" href="#">Sign out</a>
+		</header>
+		
+		<div id="user_actions">
+			<form id="search_mail_form">
+				<input type="search" />
+				<button type="submit">
+					Search
+				</button>
+			</form>
+		</div>
+		
+		<div id="main_functions">
+			<div id="create_button">
+				<a href="#">Create a letter</a>
+			</div>
+			<div id="folders">
+				<ul class="list">
+					<li><a href="#">Inbox</a></li>
+					<li><a href="#">Sent Mail</a></li>
+					<li><a href="#">Drafts</a></li>
+					<li><a href="#">Bin</a></li>
+					<li><a href="#">Spam</a></li>
+					<li><a href="#">Categories</a></li>
+					<li><a href="#">Mail Templates</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div id="mail_view">
+			<div id="manage_mail_menu">
+				<!-- this е елемента, който в момента извиква функцията-->
+				<input id="all_checkbox" type="checkbox" onClick="allCheckBoxSelected(this)" />
+				<label for="all_checkbox">All</label>
+				
+				<a class="menu_buttons" >Mark</a>
+				<a class="menu_buttons" >Delete</a>
+				<a class="menu_buttons" >Resent</a>
+				<a class="menu_buttons" >Move in</a>
+				<button id="next_page"> > </button>
+				<button id="previous_page"> < </button>
+			</div>
+		</div>
+		
+		<div id="mail_content">
+			<table id="content_table"></table>
+		</div>
+		
+		<footer>
+			<a class="footer_links" href="#"> About Us </a>
+		</footer>
+		
+	</body>
+</html>
