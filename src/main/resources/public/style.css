@@ -90,12 +90,12 @@ span {
     border: 1px solid #ffffff;
 	background: #FA8072;
 	height: 40px;
-	width: 165px;
+	width: 160px;
 	padding-top: 13px;
 	padding-left: 20px; 
 	cursor: pointer;
 	font-weight: bold;
-	font-size: 19px;
+	font-size: 21px;
 }
 
 #create_button:hover {
@@ -107,7 +107,7 @@ span {
 }
 
 #folders {
-	font-size: 15px;
+	font-size: 17px;
 	line-height: 180%;
 	font-weight: bold;
 }
@@ -181,7 +181,7 @@ tr.changeBg:hover {
 }
 
 .menu_buttons {
-	font-size: 10px;
+	font-size: 14px;
 	background-color: #ffffff;
 	border: 0.6px #3c3d77 solid;
 	border-radius: 7px;
@@ -215,6 +215,7 @@ tr.changeBg:hover {
 }
 
 #content_table {
+	width: 100%;
 	border-collapse:collapse;
 }
 
