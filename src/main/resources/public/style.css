@@ -77,6 +77,10 @@ span {
 	float: right;
 }
 
+input[type="search"] {
+	font-size: 20px;
+}
+
 #main_functions {
     clear: both;
 	float: left;
@@ -226,6 +230,34 @@ tr.changeBg:hover {
 
 #content_table tbody tr:last-child td {
 	border-bottom: none;
+}
+
+#mail_table td{
+	height: 30px;
+}
+
+#mail_table th {
+	font-size: 18px;
+	text-align: left;
+	height: 40px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ddd;
+}
+
+#fromlabel, #sentdate {
+	vertical-align: text-top;
+	padding-top: 16px;
+}
+
+.label {
+	text-align: center;
+	width: 10%;
+	font-weight: bold;
+}
+
+#receiveddate, #sentdate {
+	width: 100%;
+	text-align: right;
 }
 
 footer {

@@ -13,10 +13,22 @@
 				  contentType:"text/html",
 				  success: function(response){
 					$("body").html(response);
-					getMailContent();
+					getMailTable();
 				  }
 				});
 			});
+			
+			function getMailTable() {
+				$.ajax({
+				  url: "mail_content.html",
+				  context: document.body,
+				  contentType:"text/html",
+				  success: function(response){
+					$("#mail_content").html(response);
+					getMailContent();
+			      }
+			    });
+			}
 		</script>
 	</head>
 	

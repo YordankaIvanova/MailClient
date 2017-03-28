@@ -31,67 +31,37 @@ function getParameterByName(name, url) {
 function generateTemplate(data) {
 	var jsonContentMail = $.parseJSON(data);
 	
-	var mailContent = document.getElementById("content_table");
-	createMailTemplate(mailContent, jsonContentMail);
+	var mailContent = document.getElementById("mail_table");
+	insertInTable(mailContent, jsonContentMail);
 }
 
-function createMailTemplate(mailContent, mail) {
-	/*mailContent.innerHTML = "";*/
-	
+function insertInTable(mailContent, mail) {
 	/*first row- subject*/
-	var tableRow = mailContent.insertRow();
-	tableCell = tableRow.insertCell(0);
-	tableCell.innerHTML = mail.subject;
+	document.getElementById("subject").innerHTML = mail.subject;
 	
 	/*second row- from*/
-	var tableRow = mailContent.insertRow();
-	var tableCell = tableRow.insertCell(0);
-	tableCell.innerHTML = "From:";
-	
-	var tableCell = tableRow.insertCell(1);
-	tableCell.innerHTML = mail.from[0].personal;
-	
-	var tableCell = tableRow.insertCell(2);
-	tableCell.innerHTML = mail.from[0].address;
-	
+	document.getElementById("name_from").innerHTML = mail.from[0].personal;
+	document.getElementById("from_email").innerHTML = mail.from[0].address;
 	var date = new Date();
 	date.setTime(mail.sentDate);
-	tableCell = tableRow.insertCell(3);
-	tableCell.innerHTML = date.toUTCString();
+	document.getElementById("sentdate").innerHTML = date.toUTCString();
 	
 	/*third row- to*/
-	var tableRow = mailContent.insertRow();
-	var tableCell = tableRow.insertCell(0);
-	tableCell.innerHTML = "To:";
-	
-	var tableCell = tableRow.insertCell(1);
-	tableCell.innerHTML = check(mail.to);
-	
+	document.getElementById("recipient_email").innerHTML = check(mail.to);
 	var date = new Date();
 	date.setTime(mail.receivedDate);
-	tableCell = tableRow.insertCell(2);
-	tableCell.innerHTML = date.toUTCString();
+	document.getElementById("receiveddate").innerHTML = date.toUTCString();
+
+	document.getElementById("cc_email").innerHTML = check(mail.cc);
 	
-	var tableRow = mailContent.insertRow();
-	var tableCell = tableRow.insertCell(0);
-	tableCell.innerHTML = "CC:";
+	document.getElementById("bcc_email").innerHTML = check(mail.bcc);
 	
-	var tableCell = tableRow.insertCell(1);
-	tableCell.innerHTML = check(mail.cc);
-	
-	var tableRow = mailContent.insertRow();
-	var tableCell = tableRow.insertCell(0);
-	tableCell.innerHTML = "BCC:";
-	
-	var tableCell = tableRow.insertCell(1);
-	tableCell.innerHTML = check(mail.bcc);
-	
-	/*the content*/
+	/*the content
 	var tableRow = mailContent.insertRow();
 	var tableCell = tableRow.insertCell(0);
 	var mail = document.createElement("div");
 	mail.id = "content";
-	tableCell.appendChild(mail);
+	tableCell.appendChild(mail); */
 }
 
 function check(recipients) {
