@@ -2,7 +2,7 @@
 
 /*Object*/
 var remoteServer = {
-	url: "http://localhost:8081/"
+	url: "/"
 };
 
 function getMails() {
@@ -14,14 +14,14 @@ function getMails() {
 			generateMailTable(result);
 		}
 	});
-			
+
 }
 
 function generateMailTable(data) {
 	var jsonMails = $.parseJSON(data);
-	
+
 	var mailTable = document.getElementById("content_table");
-	for(n = 0; n < jsonMails.length; n++){
+	for(n = jsonMails.length - 1; n >= 0 ; n--){
 		var mail = $.parseJSON(jsonMails[n]);
 		createMailTableRow(mailTable, mail);
 	}
@@ -33,20 +33,20 @@ function createMailTableRow(mailTable, mail) {
         location.href="readmail.html?folderName=" + mail.folderName + "&id=" + mail.id;
     });
 	tableRow.setAttribute("class", "changeBg");
-	
+
 	var tableCell = tableRow.insertCell(0);
 	var mailCheckBox = document.createElement("input");
 	mailCheckBox.type = "checkbox";
-	var label = document.createElement("label"); 
+	var label = document.createElement("label");
 	tableCell.appendChild(mailCheckBox);
 	tableCell.appendChild(label);
-	
+
 	tableCell = tableRow.insertCell(1);
 	tableCell.innerHTML = mail.from;
-	
+
 	tableCell = tableRow.insertCell(2);
 	tableCell.innerHTML = mail.subject;
-	
+
 	var date = new Date();
 	date.setTime(mail.date);
 	tableCell = tableRow.insertCell(3);

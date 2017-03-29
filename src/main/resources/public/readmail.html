@@ -3,8 +3,8 @@
 	<head>
 		<title>Read mail</title>
 		<link rel="stylesheet" href="style.css">
-		<script type="text/javascript" src="viewmail.js"></script>
 		<script type="text/javascript" src="jquery-3.2.0.js"></script>
+		<script type="text/javascript" src="viewmail.js"></script>
 		<script>
 			$(function(){
 				$.ajax({
@@ -13,25 +13,13 @@
 				  contentType:"text/html",
 				  success: function(response){
 					$("body").html(response);
-					getMailTable();
+					getMailContent();
 				  }
 				});
 			});
-			
-			function getMailTable() {
-				$.ajax({
-				  url: "mail_content.html",
-				  context: document.body,
-				  contentType:"text/html",
-				  success: function(response){
-					$("#mail_content").html(response);
-					getMailContent();
-			      }
-			    });
-			}
 		</script>
 	</head>
-	
+
 	<body>
 	</body>
 </html>

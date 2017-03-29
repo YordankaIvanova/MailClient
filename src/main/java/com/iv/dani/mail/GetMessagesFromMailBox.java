@@ -22,8 +22,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RestController
 public class GetMessagesFromMailBox {
-	private static final boolean IS_IN_DEV_MODE = true;
-	
+	private static final boolean IS_IN_DEV_MODE = false;
+
 	private String _dev_single_mail, _dev_mails;
 	private JavaMailReader _javaMailReader = new JavaMailReader();
 	@Autowired
@@ -34,7 +34,7 @@ public class GetMessagesFromMailBox {
 	public ResponseEntity<String> getMessagesfromMailBox(
 			@RequestParam(name = "folderName", defaultValue = "inbox") String folderName)
 			throws UnsupportedEncodingException, MessagingException, JsonProcessingException, IOException {
-		
+
 
 		String messagesAsJsonArray = null;
 		if (IS_IN_DEV_MODE) {
@@ -59,8 +59,6 @@ public class GetMessagesFromMailBox {
 
 		return response;
 	}
-
-	
 
 	@CrossOrigin
 	@RequestMapping("/mail")

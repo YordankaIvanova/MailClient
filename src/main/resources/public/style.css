@@ -5,12 +5,13 @@ body {
 	color: #7f7f7f;
 	margin: 0px;
 }
+
 #heading-bg-img-wrapper {
 	background-image: url("bgimage.jpg");
 	clip-path: polygon(50% 0%, 100% 0, 100% 50%, 50% 100%, 0 50%, 0 0);
 	height: 200px;
 	width: 100%;
-	/*Without this, the element will not be positioned 
+	/*Without this, the element will not be positioned
 	underneath the other block elements.*/
 	position:absolute;
 	top:0;
@@ -47,14 +48,6 @@ header {
 	float: right;
 	margin-right: 30px;
 	color: #ffffff;
-}
-
-span {
-	margin-top: 30px;
-	padding-top: 30px;
-	position: relative;
-	top: 40px;
-	left: 250px;	
 }
 
 #manage_mail_menu button {
@@ -96,14 +89,14 @@ input[type="search"] {
 	height: 40px;
 	width: 160px;
 	padding-top: 13px;
-	padding-left: 20px; 
+	padding-left: 20px;
 	cursor: pointer;
 	font-weight: bold;
 	font-size: 21px;
 }
 
 #create_button:hover {
-	background-color: #3c3d77;	
+	background-color: #3c3d77;
 }
 
 #create_button a {
@@ -147,7 +140,7 @@ a {
 	padding-left: 20px;
 	padding-right: 15px;
 	border: 0.8px #C0C0C0 solid;
-	border-bottom: 0.1px #C0C0C0 solid; 
+	border-bottom: 0.1px #C0C0C0 solid;
 	width: 75%;
 	float: left;
 	margin: 10px 0px 15px;
@@ -160,7 +153,7 @@ input[type="checkbox"] {
 input[type="checkbox"] + label:before {
 	width: 15px;
     height: 15px;
-	background: #ffffff;	
+	background: #ffffff;
 	content: "";
 	cursor: pointer;
     display: inline-block;
@@ -202,20 +195,17 @@ tr.changeBg:hover {
 #previous_page {
 	margin-left: -105px;
 }
-	
+
 #mail_content {
 	background: #f8f8f8;
 	padding-top: 20px;
 	padding-left: 20px;
+	padding-right:15px;
 	border: 0.8px #C0C0C0 solid;
 	margin-bottom: 60px;
-	height: auto;
 	width: 75%;
 	float: left;
-}
-
-#mail_content {
-	padding-right:15px;
+	overflow: hidden;
 }
 
 #content_table {
@@ -223,20 +213,20 @@ tr.changeBg:hover {
 	border-collapse:collapse;
 }
 
-#content_table tbody tr td {
+#content_table > tbody > tr > td {
 	border-bottom: 0.8px #C0C0C0 solid;
 	padding: 10px 15px 15px 0px;
 }
 
-#content_table tbody tr:last-child td {
+#content_table > tbody > tr:last-child > td {
 	border-bottom: none;
 }
 
-#mail_table td{
+table.mail_table td {
 	height: 30px;
 }
 
-#mail_table th {
+table.mail_table th {
 	font-size: 18px;
 	text-align: left;
 	height: 40px;
@@ -244,7 +234,7 @@ tr.changeBg:hover {
 	border-bottom: 1px solid #ddd;
 }
 
-#fromlabel, #sentdate {
+td.fromlabel {
 	vertical-align: text-top;
 	padding-top: 16px;
 }
@@ -255,9 +245,15 @@ tr.changeBg:hover {
 	font-weight: bold;
 }
 
-#receiveddate, #sentdate {
+td.receiveddate, td.sentdate {
 	width: 100%;
 	text-align: right;
+}
+
+div.mail_body {
+	margin: 15px;
+	padding: 25px 15px;
+	background-color: #ffffff;
 }
 
 footer {
@@ -266,7 +262,7 @@ footer {
 	clear: both;
 	background: url("bgimage.jpg");
 	width: 100%;
-	height: 40px; 
+	height: 40px;
 }
 
 .footer_links {
