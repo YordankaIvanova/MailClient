@@ -177,6 +177,10 @@ tr.changeBg:hover {
 	background-color: #eae5e5;
 }
 
+.unread {
+	font-weight: bold;
+}
+
 .menu_buttons {
 	font-size: 14px;
 	background-color: #ffffff;

@@ -39,7 +39,11 @@ function createMailTableRow (mail) {
 	receiveddate.setTime(mail.date);
 	
 	var html = "";
-	html += '<tr class="changeBg">';
+	if(mail.seen == false){
+		html += '<tr class="changeBg unread">';
+	} else {
+		html += '<tr class="changeBg">';
+	}
 	html += '<td><input type="checkbox"><label></label></td>';
 	html += '<td>' + mail.from + '</td>';
 	html += '<td>' + mail.subject + '</td>';
