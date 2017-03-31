@@ -25,19 +25,21 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
-    
+
     // JavaMail Dependency
     compile 'com.sun.mail:javax.mail:1.5.6'
-    
+
     // Add support for the Spring Framwork
     compile 'org.springframework:spring-context:4.3.2.RELEASE'
-    
+
     compile("org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE")
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    
+
     // Add actuator support
     compile("org.springframework.boot:spring-boot-starter-actuator")
-    
+
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.7'
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 }
 
