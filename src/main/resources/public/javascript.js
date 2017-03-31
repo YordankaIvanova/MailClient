@@ -19,38 +19,32 @@ function getMails() {
 
 function generateMailTable(data) {
 	var jsonMails = $.parseJSON(data);
+	var tableRows = '<tbody>'; 
 
 	var mailTable = document.getElementById("content_table");
 	for(n = jsonMails.length - 1; n >= 0 ; n--){
 		var mail = $.parseJSON(jsonMails[n]);
-		createMailTableRow(mailTable, mail);
+		tableRows += createMailTableRow(mail);
 	}
-}
-
-function createMailTableRow(mailTable, mail) {
-	var tableRow = mailTable.insertRow(-1);
-	$(tableRow).click(function(){
+	tableRows += '</tbody>';
+	mailTable.innerHTML += tableRows;
+	
+	$(".changeBg").click(function(){
         location.href="readmail.html?folderName=" + mail.folderName + "&id=" + mail.id;
     });
-	tableRow.setAttribute("class", "changeBg");
+}
 
-	var tableCell = tableRow.insertCell(0);
-	var mailCheckBox = document.createElement("input");
-	mailCheckBox.type = "checkbox";
-	var label = document.createElement("label");
-	tableCell.appendChild(mailCheckBox);
-	tableCell.appendChild(label);
-
-	tableCell = tableRow.insertCell(1);
-	tableCell.innerHTML = mail.from;
-
-	tableCell = tableRow.insertCell(2);
-	tableCell.innerHTML = mail.subject;
-
-	var date = new Date();
-	date.setTime(mail.date);
-	tableCell = tableRow.insertCell(3);
-	tableCell.innerHTML = date.toUTCString();
+function createMailTableRow (mail) {
+	var receiveddate = new Date();
+	receiveddate.setTime(mail.date);
+	
+	var html = "";
+	html += '<tr class="changeBg">';
+	html += '<td><input type="checkbox"><label></label></td>';
+	html += '<td>' + mail.from + '</td>';
+	html += '<td>' + mail.subject + '</td>';
+	html += '<td>' + getDateFormat(receiveddate,false) + '</td></tr>';
+	return html;
 }
 
 function allCheckBoxSelected(allCheckBox) {

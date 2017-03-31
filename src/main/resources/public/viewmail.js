@@ -1,3 +1,5 @@
+/*JavaScript and jQuery*/
+
 var remoteServer = {
 	url: "/"
 };
@@ -49,9 +51,9 @@ function createMailView(mailContent, mail) {
 	html +=	'<tr><td class="label fromlabel"> From: </td>';
 	html +=	'<td colspan="2"><p id="name_from">' + mail.from[0].personal + '</p>';
 	html += '<p>' + formatMail(mail.from[0].address) + '</p></td>';
-	html += '<td class="sentdate">' + sentDate.toUTCString() + '</td></tr>';
+	html += '<td class="sentdate"><span class="datelabel"> Sent: </span>' + getDateFormat(sentDate,true) + '</td></tr>';
 	html += '<tr><td class="label"> To: </td><td>' + check(mail.to) + '</td>';
-	html +=	'<td class="receiveddate" colspan="2">'+ receivedDate.toUTCString() + '</td></tr>';
+	html +=	'<td class="receiveddate" colspan="2"><span class="datelabel"> Received: </span>' + getDateFormat(receivedDate,true) + '</td></tr>';
 
 	var ccMails = check(mail.cc);
 	if(ccMails != null) {

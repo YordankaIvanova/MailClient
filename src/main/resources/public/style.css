@@ -213,12 +213,12 @@ tr.changeBg:hover {
 	border-collapse:collapse;
 }
 
-#content_table > tbody > tr > td {
+#content_table tbody tr td {
 	border-bottom: 0.8px #C0C0C0 solid;
 	padding: 10px 15px 15px 0px;
 }
 
-#content_table > tbody > tr:last-child > td {
+#content_table  tbody  tr:last-child  td {
 	border-bottom: none;
 }
 
@@ -242,6 +242,10 @@ td.fromlabel {
 .label {
 	text-align: center;
 	width: 10%;
+	font-weight: bold;
+}
+
+.datelabel {
 	font-weight: bold;
 }
 
