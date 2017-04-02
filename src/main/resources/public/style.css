@@ -177,8 +177,12 @@ tr.changeBg:hover {
 	background-color: #eae5e5;
 }
 
-.unread {
+tr.unread {
 	font-weight: bold;
+}
+
+tr.read {
+	background-color: #f3f0f5;
 }
 
 .menu_buttons {

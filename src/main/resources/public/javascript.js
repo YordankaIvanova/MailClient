@@ -29,8 +29,10 @@ function generateMailTable(data) {
 	tableRows += '</tbody>';
 	mailTable.innerHTML += tableRows;
 	
-	$(".changeBg").click(function(){
-        location.href="readmail.html?folderName=" + mail.folderName + "&id=" + mail.id;
+	$("tr.changeBg").on("click", function(){
+		var folderName = $(this).find("input[name=folderName]")[0];
+		var id = $(this).find("input[name=id]")[0];
+        location.href="readmail.html?folderName=" + folderName.value + "&id=" + id.value;
     });
 }
 
@@ -42,12 +44,15 @@ function createMailTableRow (mail) {
 	if(mail.seen == false){
 		html += '<tr class="changeBg unread">';
 	} else {
-		html += '<tr class="changeBg">';
+		html += '<tr class="changeBg read">';
 	}
-	html += '<td><input type="checkbox"><label></label></td>';
+	html += '<td><input type="checkbox"/><label></label></td>';
 	html += '<td>' + mail.from + '</td>';
 	html += '<td>' + mail.subject + '</td>';
-	html += '<td>' + getDateFormat(receiveddate,false) + '</td></tr>';
+	html += '<td>' + getDateFormat(receiveddate,false) + '</td>';
+	html += '<input type="hidden" name="folderName" value="' + mail.folderName + '"/>';
+	html += '<input type="hidden" name="id" value="' + mail.id + '"/>';
+	html += '</tr>';
 	return html;
 }
 
