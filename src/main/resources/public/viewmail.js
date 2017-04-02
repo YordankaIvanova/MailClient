@@ -6,31 +6,8 @@ var remoteServer = {
 
 function getMailContent() {
 	var id = getParameterByName("id");
-	var folderName = getParameterByName("folderName");
-
-	$.ajax({
-		url: remoteServer.url + "mail?folderName=" + folderName + "&id=" + id,
-		type: "GET",
-		dataType: "text",
-		success: function(result) {
-			generateTemplate(result);
-		}
-	});
-}
-
-function getParameterByName(name, url) {
-    if (!url) {
-      url = window.location.href;
-    }
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
-
-function generateTemplate(data) {
+	
+	var data = sessionStorage.getItem(id);
 	var jsonContentMail = $.parseJSON(data);
 
 	var mailContent = document.getElementById("mail_content");

@@ -197,11 +197,11 @@ tr.read {
 }
 
 #next_page {
-	margin-left: 380px;
+	margin-left: -105px;
 }
 
 #previous_page {
-	margin-left: -105px;
+	margin-left: 380px;
 }
 
 #mail_content {

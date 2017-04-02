@@ -6,12 +6,15 @@ var remoteServer = {
 };
 
 function getMails() {
+	var page = getCurrentPage();
+	
 	$.ajax({
-		url: remoteServer.url + "messages",
+		url: remoteServer.url + "messages?page=" + page,
 		type: "GET",
 		dataType: "text",
 		success: function(result) {
 			generateMailTable(result);
+			generateButtons();
 		}
 	});
 
@@ -29,10 +32,25 @@ function generateMailTable(data) {
 	tableRows += '</tbody>';
 	mailTable.innerHTML += tableRows;
 	
-	$("tr.changeBg").on("click", function(){
+	$("tr.changeBg").each(function() {
 		var folderName = $(this).find("input[name=folderName]")[0];
 		var id = $(this).find("input[name=id]")[0];
-        location.href="readmail.html?folderName=" + folderName.value + "&id=" + id.value;
+		
+		$(this).find("td").slice(1).on("click", function() {
+			if(sessionStorage.getItem(id.value) == null) {
+				$.ajax({
+					url: remoteServer.url + "mail?folderName=" + folderName.value + "&id=" + id.value,
+					type: "GET",
+					dataType: "text",
+					success: function(result) {
+						sessionStorage.setItem(id.value, result);
+						location.href="readmail.html?id=" + id.value;
+					}
+				});
+			} else {	
+				location.href="readmail.html?id=" + id.value;
+			}
+		});
     });
 }
 
@@ -77,4 +95,31 @@ function hideAndShowButtons(allCheckBox) {
 			elements[n].style.visibility="hidden";
 		}
 	}
+}
+
+function generateButtons() {
+	$("button#next_page").on("click", function() {
+		var page = getCurrentPage();
+		
+		location.href = "folder.html?page=" + (page + 1);
+	});
+	
+	$("button#previous_page").on("click", function() {
+		var page = getCurrentPage();
+		
+		if(page != 0) {
+			location.href = "folder.html?page=" + (page - 1);
+		}
+	});
+}
+
+function getCurrentPage() {
+	var page = getParameterByName("page");
+	if(page == null) {
+		page = 0;
+	} else {
+		page = parseInt(page);
+	}
+	
+	return page;
 }
