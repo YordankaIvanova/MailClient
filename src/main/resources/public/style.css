@@ -50,10 +50,6 @@ header {
 	color: #ffffff;
 }
 
-#manage_mail_menu button {
-	margin-right: 100px;
-}
-
 #user_actions {
 	width: auto;
 	height: 80px;
@@ -196,12 +192,26 @@ tr.read {
 	visibility: hidden;
 }
 
+.button {
+	border: none;
+	width: 25px;
+	height: 20px;
+	cursor: pointer;
+}
+
 #next_page {
-	margin-left: -105px;
+	position: relative;
+	background: url(next.png)no-repeat;
+	margin-right: 20px;
+	float: right;
 }
 
 #previous_page {
-	margin-left: 380px;
+	position: relative;
+	background: url(previous.png)no-repeat;
+	margin-left: -80px;
+	margin-right: 50px;
+	float: right;
 }
 
 #mail_content {

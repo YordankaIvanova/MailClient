@@ -98,13 +98,13 @@ function hideAndShowButtons(allCheckBox) {
 }
 
 function generateButtons() {
-	$("button#next_page").on("click", function() {
+	$("a#next_page").on("click", function() {
 		var page = getCurrentPage();
 		
 		location.href = "folder.html?page=" + (page + 1);
 	});
 	
-	$("button#previous_page").on("click", function() {
+	$("a#previous_page").on("click", function() {
 		var page = getCurrentPage();
 		
 		if(page != 0) {
