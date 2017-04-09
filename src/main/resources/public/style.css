@@ -19,25 +19,27 @@ body {
 	z-index: -1;
 }
 
-#loading-container {
-	position: relative;
+div#loading-container {
+	position: fixed;
+	width: 100%;
 	z-index: 20;
 	top: 50px;
 }
 
-#loading-balloon {
+div#loading-balloon {
 	position: absolute;
 	z-index: 30;
 	margin: auto;
 	left: 0;
 	right: 0;
-	border: 1.5px solid #7f7f7f;
-	background-color: #fff;
-	font-size: 14px;
+	background-color: #FA8072;
+	font-size: 18px;
 	width: 7%;
 	height: 20px;
 	text-align: center;
-	padding-top: 7px;
+	padding: 7px;
+	color: #fff;
+	font-weight: 600;
 }
 
 header {
@@ -243,6 +245,7 @@ tr.read {
 	border: 0.8px #C0C0C0 solid;
 	margin-bottom: 60px;
 	width: 75%;
+	min-height: 50%;
 	float: left;
 	overflow: hidden;
 }
