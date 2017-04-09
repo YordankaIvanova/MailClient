@@ -35,7 +35,23 @@ function generateMailTable(data) {
 		var folderName = $(this).find("input[name=folderName]")[0];
 		var id = $(this).find("input[name=id]")[0];
 		
+		// При кликане където и да е в първата клетка на таблицата,
+		// пооменяме състоянието на checkbox-а, така че той да се селектира, ако
+		// е деселектиран и обратното, ако е селектиран.
+		$(this).find("td").first().on("click", function() {
+			var input = $(this).find('input[name=rowCheckbox]')[0];
+			var currentState = input.checked;
+			input.checked = !currentState;
+		});
+		
+		// При кликане в полето на останалите клетки в реда, извършва се
+		// операция по извличане на съдържанеието на съобщението
+		// и преминаване към страницата, която ще покаже съдържанието
+		// на мейла.
 		$(this).find("td").slice(1).on("click", function() {
+			
+			// Оптимизация - ако мейлът вече е бил прочетен, съдържанието
+			// му е съхранено вече в сесията и се извлича директно от нея.
 			if(sessionStorage.getItem(id.value) == null) {
 				$.ajax({
 					url: remoteServer.url + "mail?folderName=" + folderName.value + "&id=" + id.value,
@@ -63,7 +79,7 @@ function createMailTableRow (mail) {
 	} else {
 		html += '<tr class="changeBg read">';
 	}
-	html += '<td><input type="checkbox"/><label></label></td>';
+	html += '<td><input type="checkbox" name="rowCheckbox" class="checked" /><label></label></td>';
 	html += '<td>' + mail.from + '</td>';
 	html += '<td>' + mail.subject + '</td>';
 	html += '<td>' + getDateFormat(receiveddate,false) + '</td>';
@@ -112,14 +128,13 @@ function hideAndShowButtons(allCheckBox) {
 }
 
 function generateButtons() {
-	// нужно е id-то в скобите след $ да е на статичен елемент 
-	$("#manage_mail_menu").on("click", "a#next_page", function() {
+	$("a#next_page").on("click", function() {
 		var page = getCurrentPage();
 		
 		location.href = "folder.html?page=" + (page + 1);
 	});
 	
-	$("#manage_mail_menu").on("click", "a#previous_page", function()  {
+	$("a#previous_page").on("click", function()  {
 		var page = getCurrentPage();
 		
 		if(page != 0) {
