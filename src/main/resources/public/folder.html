@@ -7,15 +7,19 @@
 		<script type="text/javascript" src="javascript.js"></script>
 		<script>
 			$(function(){
+				showMessage();
 				$.ajax({
 				  url: "mail_navigation.html",
 				  context: document.body,
 				  contentType:"text/html",
 				  success: function(response){
 					$("body").html(response);
+					generateManageMailMenu();
+					generateButtons();
 					getMails();
 				  }
 				});
+				hideMessage();
 			});
 		</script>
 	</head>

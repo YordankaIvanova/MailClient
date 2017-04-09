@@ -19,6 +19,27 @@ body {
 	z-index: -1;
 }
 
+#loading-container {
+	position: relative;
+	z-index: 20;
+	top: 50px;
+}
+
+#loading-balloon {
+	position: absolute;
+	z-index: 30;
+	margin: auto;
+	left: 0;
+	right: 0;
+	border: 1.5px solid #7f7f7f;
+	background-color: #fff;
+	font-size: 14px;
+	width: 7%;
+	height: 20px;
+	text-align: center;
+	padding-top: 7px;
+}
+
 header {
 	height: 80px;
 	position: relative;

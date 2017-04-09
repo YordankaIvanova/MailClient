@@ -1,9 +1,5 @@
 /*JavaScript and jQuery*/
 
-var remoteServer = {
-	url: "/"
-};
-
 function getMailContent() {
 	var id = getParameterByName("id");
 	
@@ -11,7 +7,7 @@ function getMailContent() {
 	var jsonContentMail = $.parseJSON(data);
 
 	var mailContent = document.getElementById("mail_content");
-	mailContent.innerHTML = ""
+	mailContent.innerHTML = "";
 	createMailView(mailContent, jsonContentMail);
 }
 

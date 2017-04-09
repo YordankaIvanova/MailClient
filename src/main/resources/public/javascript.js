@@ -5,19 +5,18 @@ var remoteServer = {
 	url: "/"
 };
 
+//$.ajax() връша XmlHttpRequest обект
 function getMails() {
 	var page = getCurrentPage();
-	
+
 	$.ajax({
 		url: remoteServer.url + "messages?page=" + page,
 		type: "GET",
 		dataType: "text",
 		success: function(result) {
-			generateMailTable(result);
-			generateButtons();
+			generateMailTable(result);	
 		}
 	});
-
 }
 
 function generateMailTable(data) {
@@ -74,6 +73,21 @@ function createMailTableRow (mail) {
 	return html;
 }
 
+function generateManageMailMenu() {
+	var manageMenu = document.getElementById("manage_mail_menu");
+	
+	var html= "";
+	html += '<input id="all_checkbox" type="checkbox" onClick="allCheckBoxSelected(this)" />';
+	html += '<label for="all_checkbox">All</label>';
+	html += '<a class="menu_buttons" >Mark</a>';
+	html += '<a class="menu_buttons" >Delete</a>';
+	html += '<a class="menu_buttons" >Move in</a>';
+	html += '<a id="previous_page" class="button"></a>';
+	html += '<a id="next_page" class="button"></a>';
+	
+	manageMenu.innerHTML += html;
+}
+
 function allCheckBoxSelected(allCheckBox) {
 	hideAndShowButtons(allCheckBox);
 	checkAndUncheckAllMails(allCheckBox);
@@ -98,13 +112,14 @@ function hideAndShowButtons(allCheckBox) {
 }
 
 function generateButtons() {
-	$("a#next_page").on("click", function() {
+	// нужно е id-то в скобите след $ да е на статичен елемент 
+	$("#manage_mail_menu").on("click", "a#next_page", function() {
 		var page = getCurrentPage();
 		
 		location.href = "folder.html?page=" + (page + 1);
 	});
 	
-	$("a#previous_page").on("click", function() {
+	$("#manage_mail_menu").on("click", "a#previous_page", function()  {
 		var page = getCurrentPage();
 		
 		if(page != 0) {
