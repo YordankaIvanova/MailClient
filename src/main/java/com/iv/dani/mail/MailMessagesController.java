@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,9 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +46,6 @@ public class MailMessagesController {
 			@RequestParam(name = "folderName", defaultValue = "inbox") String folderName,
 			@RequestParam(name = "page", defaultValue = "0") int page)
 			throws UnsupportedEncodingException, MessagingException, JsonProcessingException, IOException {
-
 
 		String messagesAsJsonArray = null;
 		if (IS_IN_DEV_MODE) {
@@ -90,8 +88,7 @@ public class MailMessagesController {
 	 * @throws IOException
 	 */
 	@RequestMapping("/messages/mark/read")
-	public ResponseEntity<String> setMessagesAsRead(
-			@RequestParam(name = "folderName") String folderName,
+	public ResponseEntity<String> setMessagesAsRead(@RequestParam(name = "folderName") String folderName,
 			@RequestParam(name = "ids") String messagesIdsAsJsonArray)
 			throws MessagingException, JsonParseException, JsonMappingException, IOException {
 
@@ -115,8 +112,7 @@ public class MailMessagesController {
 	 * @throws IOException
 	 */
 	@RequestMapping("/messages/mark/unread")
-	public ResponseEntity<String> setMessagesAsUnread(
-			@RequestParam(name = "folderName") String folderName,
+	public ResponseEntity<String> setMessagesAsUnread(@RequestParam(name = "folderName") String folderName,
 			@RequestParam(name = "ids") String messagesIds)
 			throws MessagingException, JsonParseException, JsonMappingException, IOException {
 
@@ -142,8 +138,8 @@ public class MailMessagesController {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	private ResponseEntity<String> setMessagesSeenFlag(String folderName, String messagesIdsAsJsonArray, boolean shouldSet)
-			throws MessagingException, JsonParseException, JsonMappingException, IOException {
+	private ResponseEntity<String> setMessagesSeenFlag(String folderName, String messagesIdsAsJsonArray,
+			boolean shouldSet) throws MessagingException, JsonParseException, JsonMappingException, IOException {
 		_javaMailReader.connect();
 
 		ResponseEntity<String> response = null;
@@ -170,10 +166,8 @@ public class MailMessagesController {
 	}
 
 	@RequestMapping("/mail")
-	public ResponseEntity<String> getMessageFromFolder(
-			@RequestParam(name = "id") long messageId,
-			@RequestParam(name = "folderName") String folderName)
-			throws MessagingException, IOException {
+	public ResponseEntity<String> getMessageFromFolder(@RequestParam(name = "id") long messageId,
+			@RequestParam(name = "folderName") String folderName) throws MessagingException, IOException {
 
 		String messageAsJson = null;
 		if (IS_IN_DEV_MODE) {
@@ -199,6 +193,35 @@ public class MailMessagesController {
 			response = new ResponseEntity<String>(messageAsJson, headers, HttpStatus.OK);
 		} else {
 			response = new ResponseEntity<String>(String.format(ERROR_MESSAGE_TEMPLATE, "Message not found."), headers,
+					HttpStatus.NOT_FOUND);
+		}
+
+		return response;
+	}
+
+	@RequestMapping("/folders")
+	public ResponseEntity<String> getFoldersData(
+			@RequestParam(name = "folderName", defaultValue = "") String folderName)
+			throws MessagingException, JsonProcessingException {
+		_javaMailReader.connect();
+		String responseAsJson = null;
+
+		try {
+			List<FolderData> foldersData = _javaMailReader.getFoldersData(folderName, _numMailsOnPage);
+			ObjectMapper objectMapper = new ObjectMapper();
+			responseAsJson = objectMapper.writeValueAsString(foldersData);
+		} finally {
+			_javaMailReader.close();
+		}
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "text/plain");
+		ResponseEntity<String> response = null;
+		if (responseAsJson != null) {
+			response = new ResponseEntity<String>(responseAsJson, headers, HttpStatus.OK);
+		} else {
+			response = new ResponseEntity<String>(
+					String.format(ERROR_MESSAGE_TEMPLATE, "No Folders discovered for the client mailbox."), headers,
 					HttpStatus.NOT_FOUND);
 		}
 
