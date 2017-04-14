@@ -11,8 +11,6 @@ import java.util.List;
 public class FolderData {
 	private String _folderName, _folderFullName;
 	private int _unreadMessagesCount, _totalMessagesCount, _totalViewingPages, _mailsPerPage;
-	private boolean _holdsMessages;
-	private List<FolderData> _subfolders;
 
 	/**
 	 * Създава обект, който съдържа миимум необходимата информация за
@@ -22,16 +20,10 @@ public class FolderData {
 	 *            Името на папката.
 	 * @param folderFullName
 	 *            Пълният път на папката.
-	 * @param holdsMessages
-	 *            Ако е <code>true</code>, то папката съдържа имейли и други
-	 *            папки. В противен случай - съдържа само други папки.
-	 * @param _hasSubfolders
-	 *            Показва дали папката има подпапки.
 	 */
-	public FolderData(String folderName, String folderFullName, boolean holdsMessages) {
+	public FolderData(String folderName, String folderFullName) {
 		_folderName = folderName;
 		_folderFullName = folderFullName;
-		_holdsMessages = holdsMessages;
 	}
 
 	/**
@@ -63,16 +55,6 @@ public class FolderData {
 	 */
 	public void setTotalMessagesCount(int totalMessagesCount) {
 		_totalMessagesCount = totalMessagesCount;
-	}
-
-	/**
-	 * Методът задава информацията за списъка от подпаки на текущата папка.
-	 *
-	 * @param subfolders
-	 *            Информацията за подпапките на текущата папка.
-	 */
-	public void setSubfolders(List<FolderData> subfolders) {
-		_subfolders = subfolders;
 	}
 
 	/**
@@ -122,39 +104,17 @@ public class FolderData {
 	}
 
 	/**
-	 * Методът връща дали папката може да съдържа в себе си и съобшения или
-	 * съдържа само други папки.
-	 *
-	 * @return Ако е <code>true</code>, то папката съдържа имейли и други папки.
-	 *         В противен случай - съдържа само други папки.
-	 */
-	public boolean getHoldsMessages() {
-		return _holdsMessages;
-	}
-
-	/**
 	 * Методър връща колко е броят на страниците, на които се разделят мейлите в
 	 * него.
 	 *
 	 * @return Страниците за преглеждане на съобщения.
 	 */
 	public int getTotalViewingPages() {
-		if (_holdsMessages) {
-			_totalViewingPages = _totalMessagesCount / _mailsPerPage;
-			if (_totalMessagesCount % _mailsPerPage != 0) {
-				_totalViewingPages++;
-			}
+		_totalViewingPages = _totalMessagesCount / _mailsPerPage;
+		if (_totalMessagesCount % _mailsPerPage != 0) {
+			_totalViewingPages++;
 		}
 
 		return _totalViewingPages;
-	}
-
-	/**
-	 * Методът връща информация за подпапките на текущата папка.
-	 *
-	 * @return Информация за подпапките на текущата папка.
-	 */
-	public List<FolderData> getSubfolders() {
-		return _subfolders;
 	}
 }

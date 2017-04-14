@@ -187,74 +187,103 @@ public class JavaMailReader implements Closeable {
 
 	/**
 	 * Този метод създава струкура от данни, която предоставя информация за
-	 * подпапките на указаната папка.
+	 * основните папки в потребителската кутия - папката за входящи съобщения
+	 * INBOX и за базовите папки, които са подпапки на дефолтната слъжебна
+	 * папка.
 	 *
-	 * @парам folderName Името на папката, чиито подпапки да бъдат обходени.
 	 * @param mailsPerFolderPage
 	 *            Броят на мейли в една страница.
-	 * @return Информация за подпапките в текущата папка.
+	 * @return Информация за базовите папки.
 	 * @throws MessagingException
 	 *             Грешка при прочитане на информацията за папките в
 	 *             потребителската кутия.
 	 */
-	public List<FolderData> getFoldersData(String folderName, int mailsPerFolderPage) throws MessagingException {
-
+	public List<FolderData> getBaseFoldersData(int mailsPerFolderPage) throws MessagingException {
 		// Подредбата на папките в една мейл кутия има форма на дърво.
 		// На върха на дървото е служебна дефолтна папка, която съдържа
 		// като директни наследници папките от най-високо ниво в кутията.
 		// Отделно, всяка папка може да има и подпапки.
-		Folder rootFolder = null;
-		if (folderName == null || folderName.isEmpty()) {
-			rootFolder = _store.getDefaultFolder();
-		} else {
-			rootFolder = _store.getFolder(folderName);
+		Folder rootFolder = _store.getDefaultFolder();
+		Folder[] folders = rootFolder.list("%");
+
+		// Взима се информацията само за входящата кутия и за служебните папки.
+		List<FolderData> baseFoldersData = new ArrayList<FolderData>();
+		for (Folder folder : folders) {
+			FolderData folderData = null;
+			if (!folder.getName().equalsIgnoreCase("inbox")) {
+				boolean holdsMessages = (folder.getType() & Folder.HOLDS_MESSAGES) != 0;
+				if (!holdsMessages) {
+					baseFoldersData.addAll(getSubfoldersData(folder, mailsPerFolderPage));
+				}
+			} else {
+				folderData = getFolderData(folder, mailsPerFolderPage);
+			}
+
+			if (folderData != null) {
+				baseFoldersData.add(folderData);
+			}
 		}
 
-		return traverseFolderHierarchy(rootFolder, mailsPerFolderPage);
+		return baseFoldersData;
 	}
 
 	/**
-	 * Този метод извлича информация за подпапките на дадена папка. Има служебни
-	 * папки, които не съдържат мейли а само други папки. В такъв случай се
-	 * извличат и техните подпапки.
+	 * Този метод извлича информация за подпапките на указаната папка.
 	 *
-	 * @param folder
-	 *            Папката, чийто подпапки да бъдат обходени.
+	 * @param baseFolder
+	 *            Папката, чиято подпапки да бъдат обходени.
 	 * @param mailsPerFolderPage
-	 *            Броят мейли на една страница във всяка папка.
-	 * @return Йерархичната структура на подпапките на указаната папка.
+	 *            Броят мейли на една страница от папката.
+	 * @return Информация за подпапките на указаната папка.
 	 * @throws MessagingException
 	 *             Грешка при прочитане на информацията за папките в
 	 *             потребителската кутия.
 	 */
-	private List<FolderData> traverseFolderHierarchy(Folder rootFolder, int mailsPerFolderPage) throws MessagingException {
-		// Вземат се директните наследници на папката, т.е. подпапките на
-		// текущата папка.
-		Folder[] folders = rootFolder.list("%");
+	private List<FolderData> getSubfoldersData(Folder baseFolder, int mailsPerFolderPage) throws MessagingException {
+		Folder[] folders = baseFolder.list("%");
+		List<FolderData> baseFoldersData = new ArrayList<FolderData>();
 
-		List<FolderData> foldersData = new ArrayList<FolderData>();
+		for (Folder folder : folders) {
+			FolderData folderData = getFolderData(folder, mailsPerFolderPage);
 
-		for(Folder folder : folders) {
-			if (folder.exists()) {
-				// Има 2 типа папки - такива, които съдържат имейли и папки и
-				// такива, които съдържат само други папки. Определена
-				// информация е достъпна само за папки, които съдържат в себе си
-				// имейли, но не и за другия вид папки.
-				boolean holdsMessages = (folder.getType() & Folder.HOLDS_MESSAGES) != 0;
-				FolderData folderData = new FolderData(folder.getName(), folder.getFullName(), holdsMessages);
-				if (holdsMessages) {
-					folderData.setMailsPerPage(mailsPerFolderPage);
-					folderData.setTotalMessagesCount(folder.getMessageCount());
-					folderData.setUnreadMessagesCount(folder.getUnreadMessageCount());
-				} else {
-					folderData.setSubfolders(traverseFolderHierarchy(folder, mailsPerFolderPage));
-				}
-
-				foldersData.add(folderData);
+			if (folderData != null) {
+				baseFoldersData.add(folderData);
 			}
 		}
 
-		return foldersData;
+		return baseFoldersData;
+	}
+
+	/**
+	 * Този метод извлича информация за дадена папка. Ако папката не съществува,
+	 * информация не се ивзлича.
+	 *
+	 * @param folder
+	 *            Папката, чиято информация да снема.
+	 * @param mailsPerFolderPage
+	 *            Броят мейли на една страница във всяка папка.
+	 * @return Информацията, снета за съответната папка.
+	 * @throws MessagingException
+	 *             Грешка при прочитане на информацията за папката в
+	 *             потребителската кутия.
+	 */
+	private FolderData getFolderData(Folder folder, int mailsPerFolderPage) throws MessagingException {
+		FolderData folderData = null;
+		if (folder.exists()) {
+			// Има 2 типа папки - такива, които съдържат имейли и папки и
+			// такива, които съдържат само други папки. Определена
+			// информация е достъпна само за папки, които съдържат в себе си
+			// мейли, но не и за другия вид папки.
+			boolean holdsMessages = (folder.getType() & Folder.HOLDS_MESSAGES) != 0;
+			folderData = new FolderData(folder.getName(), folder.getFullName());
+			if (holdsMessages) {
+				folderData.setMailsPerPage(mailsPerFolderPage);
+				folderData.setTotalMessagesCount(folder.getMessageCount());
+				folderData.setUnreadMessagesCount(folder.getUnreadMessageCount());
+			}
+		}
+
+		return folderData;
 	}
 
 	@Override

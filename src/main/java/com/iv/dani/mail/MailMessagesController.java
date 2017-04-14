@@ -199,15 +199,14 @@ public class MailMessagesController {
 		return response;
 	}
 
-	@RequestMapping("/folders")
-	public ResponseEntity<String> getFoldersData(
-			@RequestParam(name = "folderName", defaultValue = "") String folderName)
+	@RequestMapping("/folders/base")
+	public ResponseEntity<String> getBaseFoldersData()
 			throws MessagingException, JsonProcessingException {
 		_javaMailReader.connect();
 		String responseAsJson = null;
 
 		try {
-			List<FolderData> foldersData = _javaMailReader.getFoldersData(folderName, _numMailsOnPage);
+			List<FolderData> foldersData = _javaMailReader.getBaseFoldersData(_numMailsOnPage);
 			ObjectMapper objectMapper = new ObjectMapper();
 			responseAsJson = objectMapper.writeValueAsString(foldersData);
 		} finally {
