@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script type="text/javascript" src="jquery-3.2.0.js"></script>
+		<script type="text/javascript" src="navigation.js"></script>
+		<script>
+			renderFoldersData();
+			setTimeout(readFoldersData, DELAY);
+		</script>
 	</head>
 	
 	<body>
@@ -30,14 +36,7 @@
 				<a href="#">Create a letter</a>
 			</div>
 			<div id="folders">
-				<ul class="list">
-					<li><a href="#">Inbox</a></li>
-					<li><a href="#">Sent Mail</a></li>
-					<li><a href="#">Drafts</a></li>
-					<li><a href="#">Bin</a></li>
-					<li><a href="#">Spam</a></li>
-					<li><a href="#">Categories</a></li>
-					<li><a href="#">Mail Templates</a></li>
+				<ul id="folders_menu" class="list">
 				</ul>
 			</div>
 		</div>

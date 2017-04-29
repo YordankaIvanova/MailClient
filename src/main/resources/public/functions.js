@@ -2,16 +2,12 @@
 
 //Показва loading съобщението, когато Ajax заявката се изпрати.
 function showMessage() {
-	$(document).ajaxStart(function() {
-		 $("#loading-balloon").show();
-	});
+	$("#loading-balloon").show();
 }
 
 //Скрива съобщението, когато Ajax заявката върне резултат.
 function hideMessage() {
-	$(document).ajaxStop(function() {
-		  $("#loading-balloon").hide();
-	});
+	$("#loading-balloon").hide();
 }
 
 function getDateFormat(date, showTime) {

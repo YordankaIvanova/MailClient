@@ -230,7 +230,7 @@ public class MailFormatter {
 	private String decodeWord(String word) throws UnsupportedEncodingException, ParseException {
 		// Думите, които са кодирани, започват с =?, а след тях следва формата
 		// на кодиране.
-		if (word.startsWith("=?")) {
+		if (word != null && word.startsWith("=?")) {
 			return MimeUtility.decodeWord(word);
 		}
 

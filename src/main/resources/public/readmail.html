@@ -7,17 +7,21 @@
 		<script type="text/javascript" src="functions.js"></script>
 		<script type="text/javascript" src="viewmail.js"></script>
 		<script>
-			showMessage();
 			$.ajax({
 				url: "mail_navigation.html",
 				context: document.body,
 				contentType:"text/html",
+				beforeSend: function() {
+					  showMessage();
+				},
 				success: function(response){
 					$("body").html(response);
 					getMailContent();
+				},
+				complete: function() {
+					hideMessage();
 				}
 			});
-			hideMessage();
 		</script>
 	</head>
 

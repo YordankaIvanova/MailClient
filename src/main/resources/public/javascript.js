@@ -8,13 +8,24 @@ var remoteServer = {
 //$.ajax() връша XmlHttpRequest обект
 function getMails() {
 	var page = getCurrentPage();
-
+	var folderName = getParameterByName("folderName");
+	var pageUrl = null;
+	if(folderName != null) {
+		pageUrl = remoteServer.url + 'messages?folderName='+ folderName +'&page=' + page;
+	} else {
+		pageUrl = remoteServer.url + 'messages?page=' + page;
+	}
+	
 	$.ajax({
-		url: remoteServer.url + "messages?page=" + page,
+		url: pageUrl,
 		type: "GET",
 		dataType: "text",
 		success: function(result) {
-			generateMailTable(result);	
+			generateMailTable(result);
+		},
+		complete: function() {
+			hideMessage();
+			setTimeout(getMails, REPEAT_INTERVAL);
 		}
 	});
 }
@@ -24,6 +35,7 @@ function generateMailTable(data) {
 	var tableRows = '<tbody>'; 
 
 	var mailTable = document.getElementById("content_table");
+	mailTable.innerHTML = "";
 	for(n = jsonMails.length - 1; n >= 0 ; n--){
 		var mail = $.parseJSON(jsonMails[n]);
 		tableRows += createMailTableRow(mail);
@@ -57,11 +69,19 @@ function generateMailTable(data) {
 					url: remoteServer.url + "mail?folderName=" + folderName.value + "&id=" + id.value,
 					type: "GET",
 					dataType: "text",
+					beforeSend: function() {
+						  showMessage();
+					},
 					success: function(result) {
+						hideMessage();
 						sessionStorage.setItem(id.value, result);
 						location.href="readmail.html?id=" + id.value;
+					},
+					complete: function() {
+						hideMessage();
 					}
 				});
+				
 			} else {	
 				location.href="readmail.html?id=" + id.value;
 			}
@@ -130,15 +150,18 @@ function hideAndShowButtons(allCheckBox) {
 function generateButtons() {
 	$("a#next_page").on("click", function() {
 		var page = getCurrentPage();
+		var folderNameParam = getCurrentFolderParameter();
 		
-		location.href = "folder.html?page=" + (page + 1);
+		location.href = 'folder.html?'+ folderNameParam + 'page=' + (page + 1);
 	});
 	
 	$("a#previous_page").on("click", function()  {
 		var page = getCurrentPage();
 		
 		if(page != 0) {
-			location.href = "folder.html?page=" + (page - 1);
+			var folderNameParam = getCurrentFolderParameter();
+			
+			location.href = 'folder.html?'+ folderNameParam + 'page=' + (page - 1);
 		}
 	});
 }
@@ -152,4 +175,14 @@ function getCurrentPage() {
 	}
 	
 	return page;
+}
+
+function getCurrentFolderParameter() {
+	var folderName = getParameterByName("folderName");
+	var parameter = "";
+	if(folderName != null) {
+		parameter = 'folderName='+ folderName + '&';
+	}
+	
+	return parameter;
 }

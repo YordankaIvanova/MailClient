@@ -33,7 +33,6 @@ public class MailMessagesController {
 	private static final String ERROR_MESSAGE_TEMPLATE = "{\"error\":\"%s\"}";
 
 	private String _dev_single_mail, _dev_mails;
-	private JavaMailReader _javaMailReader = new JavaMailReader();
 
 	@Autowired
 	private MailFormatter _mailFormatter;
@@ -48,6 +47,7 @@ public class MailMessagesController {
 			throws UnsupportedEncodingException, MessagingException, JsonProcessingException, IOException {
 
 		String messagesAsJsonArray = null;
+		JavaMailReader javaMailReader = new JavaMailReader();
 		if (IS_IN_DEV_MODE) {
 			if (_dev_mails == null) {
 				_dev_mails = readFile("mails.txt");
@@ -55,12 +55,12 @@ public class MailMessagesController {
 
 			messagesAsJsonArray = _dev_mails;
 		} else {
-			_javaMailReader.connect();
+			javaMailReader.connect();
 			try {
-				Message[] messages = _javaMailReader.readMailMessages(folderName, page, _numMailsOnPage);
+				Message[] messages = javaMailReader.readMailMessages(folderName, page, _numMailsOnPage);
 				messagesAsJsonArray = _mailFormatter.getMailMessagesBasicHeadersAsJson(messages);
 			} finally {
-				_javaMailReader.close();
+				javaMailReader.close();
 			}
 		}
 
@@ -72,16 +72,16 @@ public class MailMessagesController {
 	}
 
 	/**
-	 * Маркира последователност от съобщения като прочетени. Съобщенията се
-	 * указват чрез масив от техните идентификатори. Идентификаторите на
-	 * съобщението се очаква да бъдат във вид на JSON масив.
+	 * РњР°СЂРєРёСЂР° РїРѕСЃР»РµРґРѕРІР°С‚РµР»РЅРѕСЃС‚ РѕС‚ СЃСЉРѕР±С‰РµРЅРёСЏ РєР°С‚Рѕ РїСЂРѕС‡РµС‚РµРЅРё. РЎСЉРѕР±С‰РµРЅРёСЏС‚Р° СЃРµ
+	 * СѓРєР°Р·РІР°С‚ С‡СЂРµР· РјР°СЃРёРІ РѕС‚ С‚РµС…РЅРёС‚Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРё. Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР°
+	 * СЃСЉРѕР±С‰РµРЅРёРµС‚Рѕ СЃРµ РѕС‡Р°РєРІР° РґР° Р±СЉРґР°С‚ РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
 	 *
 	 * @param folderName
-	 *            Папката, където се съхраняват съобщенията.
+	 *            РџР°РїРєР°С‚Р°, РєСЉРґРµС‚Рѕ СЃРµ СЃСЉС…СЂР°РЅСЏРІР°С‚ СЃСЉРѕР±С‰РµРЅРёСЏС‚Р°.
 	 * @param messagesIdsAsJsonArray
-	 *            Идентификаторите на съобщенията във вид на JSON масив.
-	 * @return HTTP отговор, който указва дали флагът "Видян" е успешно зададен
-	 *         на всяко едно съобщение.
+	 *            Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР° СЃСЉРѕР±С‰РµРЅРёСЏС‚Р° РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
+	 * @return HTTP РѕС‚РіРѕРІРѕСЂ, РєРѕР№С‚Рѕ СѓРєР°Р·РІР° РґР°Р»Рё С„Р»Р°РіСЉС‚ "Р’РёРґСЏРЅ" Рµ СѓСЃРїРµС€РЅРѕ Р·Р°РґР°РґРµРЅ
+	 *         РЅР° РІСЃСЏРєРѕ РµРґРЅРѕ СЃСЉРѕР±С‰РµРЅРёРµ.
 	 * @throws MessagingException
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
@@ -96,16 +96,16 @@ public class MailMessagesController {
 	}
 
 	/**
-	 * Маркира последователност от съобщения като непрочетени. Съобщенията се
-	 * указват чрез масив от техните идентификатори. Идентификаторите на
-	 * съобщението се очаква да бъдат във вид на JSON масив.
+	 * РњР°СЂРєРёСЂР° РїРѕСЃР»РµРґРѕРІР°С‚РµР»РЅРѕСЃС‚ РѕС‚ СЃСЉРѕР±С‰РµРЅРёСЏ РєР°С‚Рѕ РЅРµРїСЂРѕС‡РµС‚РµРЅРё. РЎСЉРѕР±С‰РµРЅРёСЏС‚Р° СЃРµ
+	 * СѓРєР°Р·РІР°С‚ С‡СЂРµР· РјР°СЃРёРІ РѕС‚ С‚РµС…РЅРёС‚Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРё. Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР°
+	 * СЃСЉРѕР±С‰РµРЅРёРµС‚Рѕ СЃРµ РѕС‡Р°РєРІР° РґР° Р±СЉРґР°С‚ РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
 	 *
 	 * @param folderName
-	 *            Папката, където се съхраняват съобщенията.
+	 *            РџР°РїРєР°С‚Р°, РєСЉРґРµС‚Рѕ СЃРµ СЃСЉС…СЂР°РЅСЏРІР°С‚ СЃСЉРѕР±С‰РµРЅРёСЏС‚Р°.
 	 * @param messagesIdsAsJsonArray
-	 *            Идентификаторите на съобщенията във вид на JSON масив.
-	 * @return HTTP отговор, който указва дали флагът "Видян" е успешно зададен
-	 *         на всяко едно съобщение.
+	 *            Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР° СЃСЉРѕР±С‰РµРЅРёСЏС‚Р° РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
+	 * @return HTTP РѕС‚РіРѕРІРѕСЂ, РєРѕР№С‚Рѕ СѓРєР°Р·РІР° РґР°Р»Рё С„Р»Р°РіСЉС‚ "Р’РёРґСЏРЅ" Рµ СѓСЃРїРµС€РЅРѕ Р·Р°РґР°РґРµРЅ
+	 *         РЅР° РІСЃСЏРєРѕ РµРґРЅРѕ СЃСЉРѕР±С‰РµРЅРёРµ.
 	 * @throws MessagingException
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
@@ -120,19 +120,19 @@ public class MailMessagesController {
 	}
 
 	/**
-	 * Методът задава флагът "Видян" на последователност от съобщения.
-	 * Съобщенията се указват чрез масив от техните идентификатори.
-	 * Идентификаторите на съобщението се очаква да бъдат във вид на JSON масив.
+	 * РњРµС‚РѕРґСЉС‚ Р·Р°РґР°РІР° С„Р»Р°РіСЉС‚ "Р’РёРґСЏРЅ" РЅР° РїРѕСЃР»РµРґРѕРІР°С‚РµР»РЅРѕСЃС‚ РѕС‚ СЃСЉРѕР±С‰РµРЅРёСЏ.
+	 * РЎСЉРѕР±С‰РµРЅРёСЏС‚Р° СЃРµ СѓРєР°Р·РІР°С‚ С‡СЂРµР· РјР°СЃРёРІ РѕС‚ С‚РµС…РЅРёС‚Рµ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРё.
+	 * Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµС‚Рѕ СЃРµ РѕС‡Р°РєРІР° РґР° Р±СЉРґР°С‚ РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
 	 *
 	 * @param folderName
-	 *            Името на папката, където трябва да се съдържат съобщенията.
+	 *            Р�РјРµС‚Рѕ РЅР° РїР°РїРєР°С‚Р°, РєСЉРґРµС‚Рѕ С‚СЂСЏР±РІР° РґР° СЃРµ СЃСЉРґСЉСЂР¶Р°С‚ СЃСЉРѕР±С‰РµРЅРёСЏС‚Р°.
 	 * @param messagesIdsAsJsonArray
-	 *            Идентификаторите на съобщенията във вид на JSON масив.
+	 *            Р�РґРµРЅС‚РёС„РёРєР°С‚РѕСЂРёС‚Рµ РЅР° СЃСЉРѕР±С‰РµРЅРёСЏС‚Р° РІСЉРІ РІРёРґ РЅР° JSON РјР°СЃРёРІ.
 	 * @param shouldSet
-	 *            Указва дали флагът да се зададе или да се премахне от всяко
-	 *            едно съобщение.
-	 * @return HTTP отговор, който указва дали флагът "Видян" е успешно зададен
-	 *         на всяко едно съобщение.
+	 *            РЈРєР°Р·РІР° РґР°Р»Рё С„Р»Р°РіСЉС‚ РґР° СЃРµ Р·Р°РґР°РґРµ РёР»Рё РґР° СЃРµ РїСЂРµРјР°С…РЅРµ РѕС‚ РІСЃСЏРєРѕ
+	 *            РµРґРЅРѕ СЃСЉРѕР±С‰РµРЅРёРµ.
+	 * @return HTTP РѕС‚РіРѕРІРѕСЂ, РєРѕР№С‚Рѕ СѓРєР°Р·РІР° РґР°Р»Рё С„Р»Р°РіСЉС‚ "Р’РёРґСЏРЅ" Рµ СѓСЃРїРµС€РЅРѕ Р·Р°РґР°РґРµРЅ
+	 *         РЅР° РІСЃСЏРєРѕ РµРґРЅРѕ СЃСЉРѕР±С‰РµРЅРёРµ.
 	 * @throws MessagingException
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
@@ -140,7 +140,8 @@ public class MailMessagesController {
 	 */
 	private ResponseEntity<String> setMessagesSeenFlag(String folderName, String messagesIdsAsJsonArray,
 			boolean shouldSet) throws MessagingException, JsonParseException, JsonMappingException, IOException {
-		_javaMailReader.connect();
+		JavaMailReader javaMailReader = new JavaMailReader();
+		javaMailReader.connect();
 
 		ResponseEntity<String> response = null;
 		try {
@@ -149,7 +150,7 @@ public class MailMessagesController {
 				long[] ids = ArrayUtils.toPrimitive(objectMapper.readValue(messagesIdsAsJsonArray, Long[].class));
 
 				//
-				_javaMailReader.setMessagesFlag(folderName, ids, MappedMessageFlag.SEEN_MAIL, shouldSet);
+				javaMailReader.setMessagesFlag(folderName, ids, MappedMessageFlag.SEEN_MAIL, shouldSet);
 
 				response = new ResponseEntity<String>(String.format(MESSAGE_TEMPLATE, "Message flags successfully set"),
 						HttpStatus.OK);
@@ -159,7 +160,7 @@ public class MailMessagesController {
 						HttpStatus.BAD_REQUEST);
 			}
 		} finally {
-			_javaMailReader.close();
+			javaMailReader.close();
 		}
 
 		return response;
@@ -168,8 +169,9 @@ public class MailMessagesController {
 	@RequestMapping("/mail")
 	public ResponseEntity<String> getMessageFromFolder(@RequestParam(name = "id") long messageId,
 			@RequestParam(name = "folderName") String folderName) throws MessagingException, IOException {
-
 		String messageAsJson = null;
+		JavaMailReader javaMailReader = new JavaMailReader();
+		
 		if (IS_IN_DEV_MODE) {
 			if (_dev_single_mail == null) {
 				_dev_single_mail = readFile("singleMail.txt");
@@ -177,12 +179,12 @@ public class MailMessagesController {
 
 			messageAsJson = _dev_single_mail;
 		} else {
-			_javaMailReader.connect();
+			javaMailReader.connect();
 			try {
-				Message message = _javaMailReader.readSingleMailMessage(folderName, messageId);
+				Message message = javaMailReader.readSingleMailMessage(folderName, messageId);
 				messageAsJson = _mailFormatter.getMailMessageAsJson(message);
 			} finally {
-				_javaMailReader.close();
+				javaMailReader.close();
 			}
 		}
 
@@ -202,15 +204,17 @@ public class MailMessagesController {
 	@RequestMapping("/folders/base")
 	public ResponseEntity<String> getBaseFoldersData()
 			throws MessagingException, JsonProcessingException {
-		_javaMailReader.connect();
+		JavaMailReader javaMailReader = new JavaMailReader();
+		javaMailReader.connect();
+		
 		String responseAsJson = null;
 
 		try {
-			List<FolderData> foldersData = _javaMailReader.getBaseFoldersData(_numMailsOnPage);
+			List<FolderData> foldersData = javaMailReader.getBaseFoldersData(_numMailsOnPage);
 			ObjectMapper objectMapper = new ObjectMapper();
 			responseAsJson = objectMapper.writeValueAsString(foldersData);
 		} finally {
-			_javaMailReader.close();
+			javaMailReader.close();
 		}
 
 		HttpHeaders headers = new HttpHeaders();

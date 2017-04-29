@@ -81,9 +81,16 @@ public class JavaMailReader implements Closeable {
 		_folder = _store.getFolder(folderFullName);
 		_folder.open(Folder.READ_ONLY);
 		int totalMessages = _folder.getMessageCount();
+		if(totalMessages == 0) {
+			return new Message[]{};
+		}
 
 		int listedMails = page * mailsOnPage;
 		int lastMailToList = listedMails + mailsOnPage;
+		if(totalMessages < lastMailToList) {
+			lastMailToList = totalMessages; 
+		}
+		
 		messages = _folder.getMessages(totalMessages - lastMailToList + 1, totalMessages - listedMails);
 
 		// С цел да се укаже на мейл сървъра, че съобщенията се взимат вкупом,
@@ -188,7 +195,7 @@ public class JavaMailReader implements Closeable {
 	/**
 	 * Този метод създава струкура от данни, която предоставя информация за
 	 * основните папки в потребителската кутия - папката за входящи съобщения
-	 * INBOX и за базовите папки, които са подпапки на дефолтната слъжебна
+	 * INBOX и за базовите папки, които са подпапки на дефолтната служебна
 	 * папка.
 	 *
 	 * @param mailsPerFolderPage
@@ -289,12 +296,12 @@ public class JavaMailReader implements Closeable {
 	@Override
 	public void close() {
 		try {
-			if (_folder != null) {
+			if (_folder != null && _folder.isOpen()) {
 				_folder.close(false);
 				_folder = null;
 			}
 
-			if (_store != null) {
+			if (_store != null && _store.isConnected()) {
 				_store.close();
 			}
 		} catch (MessagingException e) {
