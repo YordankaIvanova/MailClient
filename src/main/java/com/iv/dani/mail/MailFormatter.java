@@ -98,7 +98,7 @@ public class MailFormatter {
 			mailMessage.put("from", decodeWord(messages[i].getFrom()[0].toString()));
 			mailMessage.put("subject", decodeWord(messages[i].getSubject()));
 			mailMessage.put("date", messages[i].getReceivedDate().getTime());
-			mailMessage.put("folderName", messages[i].getFolder().getName());
+			mailMessage.put("folderName", messages[i].getFolder().getFullName());
 			mailMessage.put("id", getMessageId(messages[i]));
 			mailMessage.putAll(MappedMessageFlag.getMappedMessageFlagsAsProperties(messages[i]));
 
