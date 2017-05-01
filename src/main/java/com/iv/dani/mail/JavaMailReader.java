@@ -185,7 +185,12 @@ public class JavaMailReader implements Closeable {
 			folder.fetch(messages, fetchProfile);
 
 			for (Message message : messages) {
-				message.setFlag(mappedMessageFlag.getJavaMailFlag(), shouldSetMessageFlag);
+				try {
+					message.setFlag(mappedMessageFlag.getJavaMailFlag(), shouldSetMessageFlag);
+				} catch (MessagingException e) {
+					//TODO logging
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -307,7 +312,7 @@ public class JavaMailReader implements Closeable {
 
 	private Folder openFolder(String folderFullName, int mode) throws MessagingException {
 		Folder folder = _store.getFolder(folderFullName);
-		folder.open(Folder.READ_ONLY);
+		folder.open(mode);
 		_folders.add(folder);
 		
 		return folder;

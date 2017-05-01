@@ -147,9 +147,12 @@ public class MailMessagesController {
 		try {
 			try {
 				ObjectMapper objectMapper = new ObjectMapper();
-				long[] ids = ArrayUtils.toPrimitive(objectMapper.readValue(messagesIdsAsJsonArray, Long[].class));
-
-				//
+				String[] strIds = objectMapper.readValue(messagesIdsAsJsonArray, String[].class);
+				long[] ids = new long[strIds.length];
+				for(int i = 0; i < strIds.length; i++) {
+					ids[i] = Long.parseLong(strIds[i]);
+				}
+				
 				javaMailReader.setMessagesFlag(folderName, ids, MappedMessageFlag.SEEN_MAIL, shouldSet);
 
 				response = new ResponseEntity<String>(String.format(MESSAGE_TEMPLATE, "Message flags successfully set"),

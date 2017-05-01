@@ -125,13 +125,52 @@ function generateManageMailMenu() {
 	var html= "";
 	html += '<input id="all_checkbox" type="checkbox" onClick="allCheckBoxSelected(this)" />';
 	html += '<label for="all_checkbox">All</label>';
-	html += '<a class="menu_buttons" >Mark</a>';
+	
+	html += '<select id="markMailSelector" class="menu_buttons">';
+	html += '<option value="markRead">Mark as Read</option>';
+	html += '<option value="markUnread">Mark as Unread</option></select>';
+		
 	html += '<a class="menu_buttons" >Delete</a>';
 	html += '<a class="menu_buttons" >Move in</a>';
 	html += '<a id="previous_page" class="button"></a>';
 	html += '<a id="next_page" class="button"></a>';
 	
 	manageMenu.innerHTML += html;
+	
+	$("#markMailSelector").on("click", function() {
+		var optionSelected = $("option:selected", this);
+	    var valueSelected = this.value;
+	    var idsAsJSON = getIDsOfSelectedMailsAsJSON();
+	    if(valueSelected == "markRead") {
+			$.post("/messages/mark/read?" + getCurrentFolderParameter()
+					+ "&ids=" + idsAsJSON)
+					.done(function() {
+						var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
+						selectedMails.removeClass("unread");
+						selectedMails.addClass("read");
+					});
+			
+	    } else if(valueSelected == "markUnread") {
+	    	$.post("/messages/mark/unread?" + getCurrentFolderParameter()
+					+ "&ids=" + idsAsJSON)
+					.done(function() {
+						var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
+						selectedMails.removeClass("read");
+						selectedMails.addClass("unread");
+					});
+	    }
+	});
+}
+
+function getIDsOfSelectedMailsAsJSON() {
+	var ids = [];
+	$("tr:has(input[name=rowCheckbox]:checked)")
+		.find("input[name=id]")
+		.each(function() {
+			ids.push($(this)[0].value);
+		});
+	
+	return JSON.stringify(ids);
 }
 
 function allCheckBoxSelected(allCheckBox) {
@@ -196,10 +235,12 @@ function getCurrentPage() {
 
 function getCurrentFolderParameter() {
 	var folderName = getParameterByName("folderName");
-	var parameter = "";
-	if(folderName != null) {
-		parameter = 'folderName='+ folderName + '&';
+	if(folderName == null) {
+		folderName = "INBOX";
 	}
+	
+	var parameter = "";
+	parameter = 'folderName='+ folderName + '&';
 	
 	return parameter;
 }
