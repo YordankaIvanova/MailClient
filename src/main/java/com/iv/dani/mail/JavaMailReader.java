@@ -12,6 +12,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.UIDFolder;
+import javax.mail.event.MessageCountListener;
 
 /**
  * Целта на този клас е да предостави улеснение при поискване на определена
@@ -33,8 +34,9 @@ import javax.mail.UIDFolder;
  *
  */
 public class JavaMailReader implements Closeable {
+	private static final String INBOX_FOLDER_NAME = "INBOX";
 	private Store _store;
-	private Folder _folder;
+	private List<Folder> _folders = new ArrayList<Folder>();
 
 	/**
 	 * Този метод осъществява връзка с кутията на потребителя.
@@ -77,10 +79,9 @@ public class JavaMailReader implements Closeable {
 		Message[] messages = null;
 
 		// Connect to the email server.
-		// Find the inbox and open it for reading.
-		_folder = _store.getFolder(folderFullName);
-		_folder.open(Folder.READ_ONLY);
-		int totalMessages = _folder.getMessageCount();
+		// Find the folder and open it for reading.
+		Folder folder = openFolder(folderFullName, Folder.READ_ONLY);
+		int totalMessages = folder.getMessageCount();
 		if(totalMessages == 0) {
 			return new Message[]{};
 		}
@@ -91,7 +92,7 @@ public class JavaMailReader implements Closeable {
 			lastMailToList = totalMessages; 
 		}
 		
-		messages = _folder.getMessages(totalMessages - lastMailToList + 1, totalMessages - listedMails);
+		messages = folder.getMessages(totalMessages - lastMailToList + 1, totalMessages - listedMails);
 
 		// С цел да се укаже на мейл сървъра, че съобщенията се взимат вкупом,
 		// може да се постигне оптимизация и намаляване на времето за извличане
@@ -100,7 +101,7 @@ public class JavaMailReader implements Closeable {
 		fetchProfile.add(FetchProfile.Item.ENVELOPE);
 		fetchProfile.add(FetchProfile.Item.FLAGS);
 
-		_folder.fetch(messages, fetchProfile);
+		folder.fetch(messages, fetchProfile);
 
 		return messages;
 	}
@@ -127,18 +128,16 @@ public class JavaMailReader implements Closeable {
 
 		Message message = null;
 
-		_folder = _store.getFolder(folderFullName);
-		_folder.open(Folder.READ_WRITE);
-
+		Folder folder = openFolder(folderFullName, Folder.READ_WRITE);
 		FetchProfile fetchProfile = new FetchProfile();
 		fetchProfile.add(FetchProfile.Item.ENVELOPE);
 		fetchProfile.add(FetchProfile.Item.CONTENT_INFO);
 
-		if (_folder instanceof UIDFolder) {
-			UIDFolder uidFolder = (UIDFolder) _folder;
+		if (folder instanceof UIDFolder) {
+			UIDFolder uidFolder = (UIDFolder) folder;
 			message = uidFolder.getMessageByUID(messageId);
 
-			_folder.fetch(new Message[] { message }, fetchProfile);
+			folder.fetch(new Message[] { message }, fetchProfile);
 		}
 
 		return message;
@@ -171,8 +170,7 @@ public class JavaMailReader implements Closeable {
 
 		// Отваряме папката за четене и запис. Тук се отваря и за запис, защото
 		// ще се записват флагове на съобщения.
-		_folder = _store.getFolder(folderFullName);
-		_folder.open(Folder.READ_WRITE);
+		Folder folder = openFolder(folderFullName, Folder.READ_WRITE);
 
 		// Указваме на сървъра да оптимизира извличането на флагове за
 		// съобщенията.
@@ -181,10 +179,10 @@ public class JavaMailReader implements Closeable {
 
 		// Намират се съобщенията по идентификатор и се задава флага на всяко
 		// едно от тях.
-		if (_folder instanceof UIDFolder) {
-			UIDFolder uidFolder = (UIDFolder) _folder;
+		if (folder instanceof UIDFolder) {
+			UIDFolder uidFolder = (UIDFolder) folder;
 			Message[] messages = uidFolder.getMessagesByUID(messagesIds);
-			_folder.fetch(messages, fetchProfile);
+			folder.fetch(messages, fetchProfile);
 
 			for (Message message : messages) {
 				message.setFlag(mappedMessageFlag.getJavaMailFlag(), shouldSetMessageFlag);
@@ -233,7 +231,21 @@ public class JavaMailReader implements Closeable {
 
 		return baseFoldersData;
 	}
+	
+	@Override
+	public void close() {
+		try {
+			closeFolders();
 
+			if (_store != null && _store.isConnected()) {
+				_store.close();
+			}
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Този метод извлича информация за подпапките на указаната папка.
 	 *
@@ -293,20 +305,20 @@ public class JavaMailReader implements Closeable {
 		return folderData;
 	}
 
-	@Override
-	public void close() {
-		try {
-			if (_folder != null && _folder.isOpen()) {
-				_folder.close(false);
-				_folder = null;
+	private Folder openFolder(String folderFullName, int mode) throws MessagingException {
+		Folder folder = _store.getFolder(folderFullName);
+		folder.open(Folder.READ_ONLY);
+		_folders.add(folder);
+		
+		return folder;
+	}
+	
+	private void closeFolders() throws MessagingException {
+		for(Folder folder : _folders) {
+			if (folder != null && folder.isOpen()) {
+				folder.close(false);
+				folder = null;
 			}
-
-			if (_store != null && _store.isConnected()) {
-				_store.close();
-			}
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

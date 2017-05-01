@@ -7,27 +7,31 @@ var remoteServer = {
 
 //$.ajax() връша XmlHttpRequest обект
 function getMails() {
-	var page = getCurrentPage();
-	var folderName = getParameterByName("folderName");
-	var pageUrl = null;
-	if(folderName != null) {
-		pageUrl = remoteServer.url + 'messages?folderName='+ folderName +'&page=' + page;
+	if(hasSelectedEmails() == true) {
+		setTimeout(getMails, REPEAT_INTERVAL);
 	} else {
-		pageUrl = remoteServer.url + 'messages?page=' + page;
-	}
-	
-	$.ajax({
-		url: pageUrl,
-		type: "GET",
-		dataType: "text",
-		success: function(result) {
-			generateMailTable(result);
-		},
-		complete: function() {
-			hideMessage();
-			setTimeout(getMails, REPEAT_INTERVAL);
+		var page = getCurrentPage();
+		var folderName = getParameterByName("folderName");
+		var pageUrl = null;
+		if(folderName != null) {
+			pageUrl = remoteServer.url + 'messages?folderName='+ folderName +'&page=' + page;
+		} else {
+			pageUrl = remoteServer.url + 'messages?page=' + page;
 		}
-	});
+		
+		$.ajax({
+			url: pageUrl,
+			type: "GET",
+			dataType: "text",
+			success: function(result) {
+				generateMailTable(result);
+			},
+			complete: function() {
+				hideMessage();
+				setTimeout(getMails, REPEAT_INTERVAL);
+			}
+		});
+	}
 }
 
 function generateMailTable(data) {
@@ -54,6 +58,12 @@ function generateMailTable(data) {
 			var input = $(this).find('input[name=rowCheckbox]')[0];
 			var currentState = input.checked;
 			input.checked = !currentState;
+			
+			// Прави се проверка дали има селектирани имейли и
+			// ако има - показват се бутоните. В противен случай -
+			// бутоните се скриват.
+			var shouldShowButtons = hasSelectedEmails();
+			hideAndShowButtons(shouldShowButtons);
 		});
 		
 		// При кликане в полето на останалите клетки в реда, извършва се
@@ -125,7 +135,7 @@ function generateManageMailMenu() {
 }
 
 function allCheckBoxSelected(allCheckBox) {
-	hideAndShowButtons(allCheckBox);
+	hideAndShowButtons(allCheckBox.checked);
 	checkAndUncheckAllMails(allCheckBox);
 }
 
@@ -136,10 +146,10 @@ function checkAndUncheckAllMails(allCheckBox) {
 	}
 }
 
-function hideAndShowButtons(allCheckBox) {
+function hideAndShowButtons(shouldShow) {
 	var elements = document.getElementsByClassName("menu_buttons");
 	for(n = 0; n < elements.length; n++) {
-		if(allCheckBox.checked){
+		if(shouldShow){
 			elements[n].style.visibility="visible";
 		} else {
 			elements[n].style.visibility="hidden";
@@ -164,6 +174,13 @@ function generateButtons() {
 			location.href = 'folder.html?'+ folderNameParam + 'page=' + (page - 1);
 		}
 	});
+}
+
+function hasSelectedEmails() {
+	var n = $("input[name=rowCheckbox]:checked").length;
+	var hasSelectedEmails = (n > 0);
+	
+	return hasSelectedEmails;
 }
 
 function getCurrentPage() {
