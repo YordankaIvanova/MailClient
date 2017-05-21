@@ -34,7 +34,6 @@ import javax.mail.event.MessageCountListener;
  *
  */
 public class JavaMailReader implements Closeable {
-	private static final String INBOX_FOLDER_NAME = "INBOX";
 	private Store _store;
 	private List<Folder> _folders = new ArrayList<Folder>();
 
@@ -89,9 +88,9 @@ public class JavaMailReader implements Closeable {
 		int listedMails = page * mailsOnPage;
 		int lastMailToList = listedMails + mailsOnPage;
 		if(totalMessages < lastMailToList) {
-			lastMailToList = totalMessages; 
+			lastMailToList = totalMessages;
 		}
-		
+
 		messages = folder.getMessages(totalMessages - lastMailToList + 1, totalMessages - listedMails);
 
 		// С цел да се укаже на мейл сървъра, че съобщенията се взимат вкупом,
@@ -236,7 +235,7 @@ public class JavaMailReader implements Closeable {
 
 		return baseFoldersData;
 	}
-	
+
 	@Override
 	public void close() {
 		try {
@@ -250,7 +249,7 @@ public class JavaMailReader implements Closeable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Този метод извлича информация за подпапките на указаната папка.
 	 *
@@ -314,10 +313,10 @@ public class JavaMailReader implements Closeable {
 		Folder folder = _store.getFolder(folderFullName);
 		folder.open(mode);
 		_folders.add(folder);
-		
+
 		return folder;
 	}
-	
+
 	private void closeFolders() throws MessagingException {
 		for(Folder folder : _folders) {
 			if (folder != null && folder.isOpen()) {
