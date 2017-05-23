@@ -1,4 +1,4 @@
-package com.iv.dani.mail;
+package com.iv.dani.mail.data;
 
 /**
  * Този клас съдържа в себе си определна информация за една папка от една мейл

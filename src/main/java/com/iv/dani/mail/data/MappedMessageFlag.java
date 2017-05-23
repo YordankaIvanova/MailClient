@@ -1,4 +1,4 @@
-package com.iv.dani.mail;
+package com.iv.dani.mail.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
