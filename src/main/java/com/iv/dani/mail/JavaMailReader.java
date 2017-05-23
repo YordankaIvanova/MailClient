@@ -12,7 +12,10 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.UIDFolder;
-import javax.mail.event.MessageCountListener;
+
+import com.iv.dani.mail.data.FolderData;
+import com.iv.dani.mail.data.MappedMessageFlag;
+import com.iv.dani.mail.data.UserLoginData;
 
 /**
  * Целта на този клас е да предостави улеснение при поискване на определена
@@ -36,6 +39,11 @@ import javax.mail.event.MessageCountListener;
 public class JavaMailReader implements Closeable {
 	private Store _store;
 	private List<Folder> _folders = new ArrayList<Folder>();
+	private static final UserLoginData DEFAULT_USER =
+			new UserLoginData(
+					"miroslav.shtarbev@gmail.com",
+					"miro17protoBG",
+					"imap.gmail.com");
 
 	/**
 	 * Този метод осъществява връзка с кутията на потребителя.
@@ -43,18 +51,22 @@ public class JavaMailReader implements Closeable {
 	 * @throws MessagingException
 	 *             Грешка при свързване с потребитлеската кутия.
 	 */
-	public void connect() throws MessagingException {
+	public void connect(UserLoginData userLogin) throws MessagingException {
 		// https://www.google.com/settings/security/lesssecureapps
-		String host = "imap.gmail.com";
-		String username = "miroslav.shtarbev@gmail.com";
-		String password = "miro17protoBG";
 		String storeProtocol = "imaps";
 
 		Properties properties = new Properties();
 
 		Session session = Session.getDefaultInstance(properties);
 		_store = session.getStore(storeProtocol);
-		_store.connect(host, username, password);
+		if (userLogin == null) {
+			userLogin = DEFAULT_USER;
+		}
+
+		_store.connect(
+				userLogin.getHost(),
+				userLogin.getUsername(),
+				userLogin.getPassword());
 	}
 
 	/**

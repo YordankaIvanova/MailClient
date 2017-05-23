@@ -1,4 +1,4 @@
-package com.iv.dani.mail;
+package com.iv.dani.mail.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iv.dani.mail.data.MappedMessageFlag;
 
 /**
  * Целта на този клас е да предоставя методи за обработка и форматиране на
@@ -161,22 +162,7 @@ public class MailFormatter {
 
 			InputStream imageStream = (InputStream) o;
 			partContent.append(getStringFromInputStream(imageStream));
-		}
-		// else if (p.getContentType().contains("image/")) {
-		// System.out.println("content type" + p.getContentType());
-		// File f = new File("image" + new Date().getTime() + ".jpg");
-		// DataOutputStream output = new DataOutputStream(
-		// new BufferedOutputStream(new FileOutputStream(f)));
-		// com.sun.mail.util.BASE64DecoderStream test =
-		// (com.sun.mail.util.BASE64DecoderStream) p
-		// .getContent();
-		// byte[] buffer = new byte[1024];
-		// int bytesRead;
-		// while ((bytesRead = test.read(buffer)) != -1) {
-		// output.write(buffer, 0, bytesRead);
-		// }
-		// }
-		else {
+		} else {
 			Object o = part.getContent();
 			if (o instanceof String) {
 				partContent.append(partContent.append((String) o));
