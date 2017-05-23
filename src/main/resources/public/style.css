@@ -92,6 +92,14 @@ header {
 input[type="search"] {
 	font-size: 20px;
 }
+#searchbtn {
+	font-size: 20px;
+	text-align: center;
+    border-radius: 4px;
+    border: solid #FA8072;
+    color: #FA8072;
+    background: #fff;
+}
 
 #main_functions {
     clear: both;
@@ -310,6 +318,7 @@ div.mail_body {
 	font-size: 15px;
 	text-align: center;
 	color: #fff;
+	cursor: pointer;
 }
 
 #discardbutton {
@@ -321,6 +330,7 @@ div.mail_body {
 	font-size: 15px;
 	text-align: center;
 	color: #7f7f7f;
+	cursor: pointer;
 }
 
 #formtolabel {
@@ -346,6 +356,18 @@ div.mail_body {
     margin: 8px 0;
     box-sizing: border-box;
     border-radius: 4px;
+}
+
+#recipients, #cc_recipients, #subject {
+	color: #FA8072;
+	margin-left: 92px;
+	margin-top: -10px;
+}
+
+#notification {
+	font-size: 20px;
+	font-weight: bold;
+	color: #3c3d77;
 }
 
 footer {
