@@ -39,11 +39,13 @@ import com.iv.dani.mail.data.UserLoginData;
 public class JavaMailReader implements Closeable {
 	private Store _store;
 	private List<Folder> _folders = new ArrayList<Folder>();
+	// FIXME: remove
 	private static final UserLoginData DEFAULT_USER =
 			new UserLoginData(
 					"miroslav.shtarbev@gmail.com",
 					"miro17protoBG",
-					"imap.gmail.com");
+					"imap.gmail.com",
+					"smtp.gmail.com");
 
 	/**
 	 * Този метод осъществява връзка с кутията на потребителя.
@@ -64,7 +66,7 @@ public class JavaMailReader implements Closeable {
 		}
 
 		_store.connect(
-				userLogin.getHost(),
+				userLogin.getImapHost(),
 				userLogin.getUsername(),
 				userLogin.getPassword());
 	}

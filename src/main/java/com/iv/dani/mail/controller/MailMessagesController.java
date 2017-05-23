@@ -6,22 +6,27 @@ import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iv.dani.mail.JavaMailReader;
+import com.iv.dani.mail.JavaMailWriter;
 import com.iv.dani.mail.UserSessionStore;
 import com.iv.dani.mail.data.FolderData;
+import com.iv.dani.mail.data.MailMessage;
 import com.iv.dani.mail.data.MappedMessageFlag;
 import com.iv.dani.mail.util.HttpUtils;
 import com.iv.dani.mail.util.MailFormatter;
@@ -46,6 +51,9 @@ public class MailMessagesController {
 
 	@Autowired
 	private MailFormatter _mailFormatter;
+
+	@Autowired
+	private JavaMailWriter _mailwriter;
 
 	@Value("${mail.page.numMails}")
 	private int _numMailsOnPage;
@@ -144,54 +152,6 @@ public class MailMessagesController {
 	}
 
 	/**
-	 * Методът задава флагът "Видян" на последователност от съобщения.
-	 * Съобщенията се указват чрез масив от техните идентификатори.
-	 * Идентификаторите на съобщението се очаква да бъдат във вид на JSON масив.
-	 *
-	 * @param userToken
-	 *            Потребителският токен за автентикация.
-	 * @param folderName
-	 *            Името на папката, където трябва да се съдържат съобщенията.
-	 * @param messagesIdsAsJsonArray
-	 *            Идентификаторите на съобщенията във вид на JSON масив.
-	 * @param shouldSet
-	 *            Указва дали флагът да се зададе или да се премахне от всяко
-	 *            едно съобщение.
-	 * @return HTTP отговор, който указва дали флагът "Видян" е успешно зададен
-	 *         на всяко едно съобщение.
-	 */
-	private ResponseEntity<String> setMessagesSeenFlag(
-			String userToken,
-			String folderName,
-			String messagesIdsAsJsonArray,
-			boolean shouldSet) {
-		JavaMailReader javaMailReader = new JavaMailReader();
-		ResponseEntity<String> response = null;
-
-		try {
-			javaMailReader.connect(_userSessionStore.getUserSession(userToken));
-
-			ObjectMapper objectMapper = new ObjectMapper();
-			String[] strIds = objectMapper.readValue(messagesIdsAsJsonArray, String[].class);
-			long[] ids = new long[strIds.length];
-			for(int i = 0; i < strIds.length; i++) {
-				ids[i] = Long.parseLong(strIds[i]);
-			}
-
-			javaMailReader.setMessagesFlag(folderName, ids, MappedMessageFlag.SEEN_MAIL, shouldSet);
-			response = _httpUtils.createSuccessPlainTextResponse("Message flags successfully set");
-		} catch (MessagingException | IOException e) {
-			response = _httpUtils.createErrorPlainTextResponse(
-					"Failed to change message flags.",
-					HttpStatus.BAD_REQUEST);
-		} finally {
-			javaMailReader.close();
-		}
-
-		return response;
-	}
-
-	/**
 	 * Този метод извлича цялото съдържанеие на мейл за неговото прочитане.
 	 *
 	 * @param messageId
@@ -266,6 +226,72 @@ public class MailMessagesController {
 			response = _httpUtils.createErrorPlainTextResponse(
 					"Folder data could not be processes.",
 					HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			javaMailReader.close();
+		}
+
+		return response;
+	}
+
+	@RequestMapping(value = "/mail/send", method = RequestMethod.PUT)
+	public ResponseEntity<String> writeMailMessage(
+			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken,
+			@RequestBody MailMessage mailMessage) {
+
+		ResponseEntity<String> response = null;
+		try {
+			_mailwriter.sendMessage(_userSessionStore.getUserSession(userToken), mailMessage);
+			response = _httpUtils.createMessagePlainTextResponse("Message successfully sent", HttpStatus.OK);
+		} catch (MessagingException e) {
+			//FIXME logging.
+			e.printStackTrace();
+			response = _httpUtils.createErrorPlainTextResponse("Message could not be sent", HttpStatus.BAD_REQUEST);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Методът задава флагът "Видян" на последователност от съобщения.
+	 * Съобщенията се указват чрез масив от техните идентификатори.
+	 * Идентификаторите на съобщението се очаква да бъдат във вид на JSON масив.
+	 *
+	 * @param userToken
+	 *            Потребителският токен за автентикация.
+	 * @param folderName
+	 *            Името на папката, където трябва да се съдържат съобщенията.
+	 * @param messagesIdsAsJsonArray
+	 *            Идентификаторите на съобщенията във вид на JSON масив.
+	 * @param shouldSet
+	 *            Указва дали флагът да се зададе или да се премахне от всяко
+	 *            едно съобщение.
+	 * @return HTTP отговор, който указва дали флагът "Видян" е успешно зададен
+	 *         на всяко едно съобщение.
+	 */
+	private ResponseEntity<String> setMessagesSeenFlag(
+			String userToken,
+			String folderName,
+			String messagesIdsAsJsonArray,
+			boolean shouldSet) {
+		JavaMailReader javaMailReader = new JavaMailReader();
+		ResponseEntity<String> response = null;
+
+		try {
+			javaMailReader.connect(_userSessionStore.getUserSession(userToken));
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			String[] strIds = objectMapper.readValue(messagesIdsAsJsonArray, String[].class);
+			long[] ids = new long[strIds.length];
+			for(int i = 0; i < strIds.length; i++) {
+				ids[i] = Long.parseLong(strIds[i]);
+			}
+
+			javaMailReader.setMessagesFlag(folderName, ids, MappedMessageFlag.SEEN_MAIL, shouldSet);
+			response = _httpUtils.createSuccessPlainTextResponse("Message flags successfully set");
+		} catch (MessagingException | IOException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Failed to change message flags.",
+					HttpStatus.BAD_REQUEST);
 		} finally {
 			javaMailReader.close();
 		}

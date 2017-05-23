@@ -4,16 +4,18 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserLoginData {
-	private String _username, _password, _host;
+	private String _username, _password, _imapHost, _smtpHost;
 
 	@JsonCreator
 	public UserLoginData(
 			 @JsonProperty("username") String username,
 			 @JsonProperty("password") String password,
-			 @JsonProperty("host") String host) {
+			 @JsonProperty("imapHost") String imapHost,
+			 @JsonProperty("smtpHost") String smtpHost) {
 		_username = username;
 		_password = password;
-		_host = host;
+		_imapHost = imapHost;
+		_smtpHost = smtpHost;
 	}
 
 	public String getUsername() {
@@ -24,7 +26,11 @@ public class UserLoginData {
 		return _password;
 	}
 
-	public String getHost() {
-		return _host;
+	public String getImapHost() {
+		return _imapHost;
+	}
+
+	public String getSmtpHost() {
+		return _smtpHost;
 	}
 }
