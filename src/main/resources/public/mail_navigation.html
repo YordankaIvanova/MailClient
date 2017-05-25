@@ -2,27 +2,27 @@
 <html>
 	<head>
 		<script type="text/javascript" src="jquery-3.2.0.js"></script>
-		<script type="text/javascript" src="loginfunctions.js"></script>
+		<script type="text/javascript" src="functions.js"></script>
 		<script type="text/javascript" src="navigation.js"></script>
 		<script>
 			renderFoldersData();
 			setTimeout(readFoldersData, DELAY);
 		</script>
 	</head>
-	
+
 	<body>
-	
+
 		<div id="heading-bg-img-wrapper"></div>
 		<div id="loading-container" >
 			<div id="loading-balloon">Loading...</div>
 		</div>
-		
+
 		<header>
 			<img id="logo" src="mail_icon_pink.png" alt="Logo">
 			<p id="name"></p>
-			<a id="exit" href="#">Sign out</a>
+			<p id="exit">Sign out</p>
 		</header>
-		
+
 		<div id="main_functions">
 			<div id="create_button">
 				<a id="create_letter" href="writeletter.html">Create a letter</a>
@@ -32,19 +32,19 @@
 				</ul>
 			</div>
 		</div>
-		
+
 		<div id="mail_view">
-			<div id="manage_mail_menu">		
+			<div id="manage_mail_menu">
 			</div>
 		</div>
-		
+
 		<div id="mail_content">
 			<table id="content_table"></table>
 		</div>
-		
+
 		<footer>
 			<a class="footer_links" href="#"> About Us </a>
 		</footer>
-		
+
 	</body>
 </html>

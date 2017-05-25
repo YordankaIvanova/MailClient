@@ -7,12 +7,12 @@
 		<script type="text/javascript" src="javascript.js"></script>
 		<script>
 			$(function(){
-				var SessionValue = sessionStorage.getItem(TOKEN); 
-					
+				var tokenValue = sessionStorage.getItem(TOKEN);
+
 				$.ajax({
 				  url: "mail_navigation.html",
 				  headers: {
-		        		"X-User-Token": SessionValue
+		        		"X-User-Token": tokenValue
 		   		  },
 				  context: document.body,
 				  contentType:"text/html",
@@ -25,11 +25,11 @@
 					generateButtons();
 					getMails();
 				  }
-				});			
+				});
 			});
 		</script>
 	</head>
 	<body>
-	
+
 	</body>
 </html>

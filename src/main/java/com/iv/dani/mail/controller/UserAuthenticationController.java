@@ -18,6 +18,9 @@ import com.iv.dani.mail.util.HttpUtils;
 
 @RestController
 public class UserAuthenticationController {
+	private static final String TOKEN_RESPONSE_BODY_TEMPLATE = "{\"token\":\"%s\"}";
+	private static final String VALID_TOKEN_TEMPLATE = "{\"isValid\":\"%b\"}";
+
 	@Autowired
 	private UserSessionStore _userSessionStore;
 
@@ -33,9 +36,11 @@ public class UserAuthenticationController {
 		try {
 			mailReader.connect(userLoginData);
 			String userToken = _userSessionStore.createUserSession(userLoginData);
-			response = _httpUtils.createSuccessPlainTextResponse(userToken);
+			response = _httpUtils
+					.createSuccessJsonResponse(String.format(TOKEN_RESPONSE_BODY_TEMPLATE, userToken));
 		} catch (MessagingException e) {
-			response = _httpUtils.createErrorPlainTextResponse("Authentication failed. Please try again!", HttpStatus.BAD_REQUEST);
+			response = _httpUtils.createErrorPlainTextResponse("Authentication failed. Please try again!",
+					HttpStatus.BAD_REQUEST);
 		} finally {
 			mailReader.close();
 		}
@@ -57,6 +62,17 @@ public class UserAuthenticationController {
 		} finally {
 			mailReader.close();
 		}
+
+		return response;
+	}
+
+	@RequestMapping(value = "/auth/verify", method = RequestMethod.GET)
+	public  ResponseEntity<String> verify(
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
+		ResponseEntity<String> response = null;
+
+		boolean isValid = _userSessionStore.getUserSession(userToken) != null;
+		response = _httpUtils.createSuccessJsonResponse(String.format(VALID_TOKEN_TEMPLATE, isValid));
 
 		return response;
 	}

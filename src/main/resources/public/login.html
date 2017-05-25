@@ -7,17 +7,17 @@
 		<script type="text/javascript" src="functions.js"></script>
 		<script type="text/javascript" src="loginfunctions.js"></script>
 	</head>
-	
+
 	<body>
-	
+
 		<div id="heading-bg-img-wrapper"></div>
-		
+
 		<header>
 			<img id="logo" src="mail_icon_pink.png" alt="Logo">
 		</header>
-		
+
 		<div id="login_form">
-			<form>
+			<form method="post">
 				<p>
 					<label id="un_label">User name:</label>
 					<input type="text" name="username" id="username" class="login_field" />
@@ -38,14 +38,14 @@
 					<input type="text" name="smtpHost" id="smtp" class="login_field" />
 				</p>
 				<p id="smtp_warning"></p>
-				<button type="submit" id="signin_btn">Sign in</button>
+				<button type="button" id="signin_btn">Sign in</button>
 				<p id="error"></p>
-			</form>	
+			</form>
 		</div>
-		
+
 		<footer>
 			<a class="footer_links" href="#"></a>
 		</footer>
-		
+
 	</body>
 </html>

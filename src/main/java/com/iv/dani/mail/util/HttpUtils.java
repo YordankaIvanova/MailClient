@@ -27,7 +27,11 @@ public class HttpUtils {
 	 * @return HTTP отговор със статус 200.
 	 */
 	public ResponseEntity<String> createSuccessPlainTextResponse(String responseBody) {
-		return createResponse(responseBody,	HttpStatus.OK);
+		return createPlainResponse(responseBody, HttpStatus.OK);
+	}
+
+	public ResponseEntity<String> createSuccessJsonResponse(String responseBody) {
+		return createJsonResponse(responseBody, HttpStatus.OK);
 	}
 
 	/**
@@ -41,7 +45,7 @@ public class HttpUtils {
 	 * @return HTTP отговор, който съдържа JSON съобщение.
 	 */
 	public ResponseEntity<String> createMessagePlainTextResponse(String messageBody, HttpStatus httpStatus) {
-		return createResponse(
+		return createJsonResponse(
 				String.format(MESSAGE_TEMPLATE, messageBody),
 				httpStatus);
 	}
@@ -58,14 +62,24 @@ public class HttpUtils {
 	 * @return HTTP отговор, който съдържа JSON съобщение.
 	 */
 	public ResponseEntity<String> createErrorPlainTextResponse(String errorBody, HttpStatus httpStatus) {
-		return createResponse(
+		return createJsonResponse(
 				String.format(ERROR_MESSAGE_TEMPLATE, errorBody),
 				httpStatus);
 	}
 
-	private ResponseEntity<String> createResponse(String body, HttpStatus httpStatus) {
+	private ResponseEntity<String> createPlainResponse(String body, HttpStatus httpStatus) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "text/plain");
+
+		return new ResponseEntity<String>(
+				body,
+				headers,
+				httpStatus);
+	}
+
+	private ResponseEntity<String> createJsonResponse(String body, HttpStatus httpStatus) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "application/json");
 
 		return new ResponseEntity<String>(
 				body,

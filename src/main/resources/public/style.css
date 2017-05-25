@@ -73,6 +73,10 @@ header {
 	color: #ffffff;
 }
 
+p#exit:hover {
+	cursor: pointer;
+}
+
 #user_actions {
 	width: auto;
 	height: 80px;
