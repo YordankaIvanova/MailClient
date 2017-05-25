@@ -35,13 +35,19 @@ function showMailForm() {
 }
 
 $(document).ready(function() {
-
-	function validateEmail(email) {
-		var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return emailRegex.test(email);
+	function buttonBehaviour() {
+		if(confirm("Your message will be discarded.") == true) {
+			window.history.back();
+	    }
 	}
 	
+	var createBtn = $("#create_letter");
+	createBtn.removeAttr("href");
 	
+	createBtn.on("click", function(){
+		buttonBehaviour();
+	});
+
 	$("body").on('click','button#sendbutton', function() {
 		var value = $("#to_field").val();
 		var ccvalue = $("#cc_field").val();
@@ -68,10 +74,14 @@ $(document).ready(function() {
 		var mail = serializeObject($("form#mailform"));
 		mail.mailcontent = CKEDITOR.instances.editor.getData();
 		var jsonMailString = JSON.stringify(mail);
+		var SessionValue = sessionStorage.getItem(TOKEN); 
 		
 		$.ajax({
 			url: "/mail/send",
 			type: "PUT",
+			headers: {
+        		"X-User-Token": SessionValue
+   			},
 			dataType: "json",
 			data: jsonMailString,
 			contentType: "application/json; charset=utf-8",
@@ -82,9 +92,7 @@ $(document).ready(function() {
 	});
 	
 	$("body").on('click','button#discardbutton', function() {
-		if(confirm("Your message will be discarded.") == true) {
-			window.history.back();
-		}	
+		buttonBehaviour();	
 	});
 });
 

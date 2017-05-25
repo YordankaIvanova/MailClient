@@ -2,10 +2,19 @@ const NAV_FOLDERS_SESSION_PROPERTY_NAME = "nav_folders";
 const DELAY = 5000;
 const REPEAT_INTERVAL = 15000;
 
+$(document).ready(function() {
+	$("#name").html(value);
+});
+
 function readFoldersData() {
+	var SessionValue = sessionStorage.getItem(TOKEN);
+	
 	$.ajax({
 		url: "/folders/base",
 		type: "GET",
+		headers: {
+    		"X-User-Token": SessionValue
+	    },
 		dataType: "text",
 		success: function(result) {
 			sessionStorage.setItem(NAV_FOLDERS_SESSION_PROPERTY_NAME, result);

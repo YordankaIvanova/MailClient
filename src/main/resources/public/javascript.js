@@ -19,9 +19,14 @@ function getMails() {
 			pageUrl = remoteServer.url + 'messages?page=' + page;
 		}
 		
+		var SessionValue = sessionStorage.getItem(TOKEN);
+		  
 		$.ajax({
 			url: pageUrl,
 			type: "GET",
+			headers: {
+        		"X-User-Token": SessionValue
+   		    },
 			dataType: "text",
 			success: function(result) {
 				generateMailTable(result);
@@ -75,9 +80,14 @@ function generateMailTable(data) {
 			// Оптимизация - ако мейлът вече е бил прочетен, съдържанието
 			// му е съхранено вече в сесията и се извлича директно от нея.
 			if(sessionStorage.getItem(id.value) == null) {
+				var SessionValue = sessionStorage.getItem(TOKEN);
+					
 				$.ajax({
 					url: remoteServer.url + "mail?folderName=" + folderName.value + "&id=" + id.value,
 					type: "GET",
+					headers: {
+		        		"X-User-Token": SessionValue
+		   		    },
 					dataType: "text",
 					beforeSend: function() {
 						  showMessage();
@@ -130,8 +140,6 @@ function generateManageMailMenu() {
 	html += '<option value="markRead">Mark as Read</option>';
 	html += '<option value="markUnread">Mark as Unread</option></select>';
 		
-	html += '<a class="menu_buttons" >Delete</a>';
-	html += '<a class="menu_buttons" >Move in</a>';
 	html += '<a id="previous_page" class="button"></a>';
 	html += '<a id="next_page" class="button"></a>';
 	

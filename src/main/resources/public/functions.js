@@ -1,5 +1,7 @@
 /*JavaScript*/
 
+var TOKEN = "token";
+
 //Показва loading съобщението, когато Ajax заявката се изпрати.
 function showMessage() {
 	$("#loading-balloon").show();
@@ -68,6 +70,11 @@ function getParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return null;
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function validateEmail(email) {
+	var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return emailRegex.test(email);
 }
 
 function serializeObject(form) {

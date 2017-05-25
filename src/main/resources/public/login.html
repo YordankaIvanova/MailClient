@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Log in</title>
+		<link rel="stylesheet" href="style.css">
+		<script type="text/javascript" src="jquery-3.2.0.js"></script>
+		<script type="text/javascript" src="functions.js"></script>
+		<script type="text/javascript" src="loginfunctions.js"></script>
+	</head>
+	
+	<body>
+	
+		<div id="heading-bg-img-wrapper"></div>
+		
+		<header>
+			<img id="logo" src="mail_icon_pink.png" alt="Logo">
+		</header>
+		
+		<div id="login_form">
+			<form>
+				<p>
+					<label id="un_label">User name:</label>
+					<input type="text" name="username" id="username" class="login_field" />
+				</p>
+				<p id="un_warning"></p>
+				<p>
+					<label id="pass_label">Password:</label>
+					<input type="password" name="password" id="password" class="login_field" />
+				</p>
+				<p id="pass_warning"></p>
+				<p>
+					<label id="imap_label">IMAP Host:</label>
+					<input type="text" name="imapHost" id="imap" class="login_field" />
+				</p>
+				<p id="imap_warning"></p>
+				<p>
+					<label id="smtp_label">SMTP Host:</label>
+					<input type="text" name="smtpHost" id="smtp" class="login_field" />
+				</p>
+				<p id="smtp_warning"></p>
+				<button type="submit" id="signin_btn">Sign in</button>
+				<p id="error"></p>
+			</form>	
+		</div>
+		
+		<footer>
+			<a class="footer_links" href="#"></a>
+		</footer>
+		
+	</body>
+</html>

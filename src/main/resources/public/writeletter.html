@@ -9,8 +9,12 @@
 		<script src="ckeditor/ckeditor.js"></script>
         <script type="text/javascript" src="lettereditor.js"></script>
         <script>
+       		var SessionValue = sessionStorage.getItem(TOKEN); 
 			$.ajax({
 				url: "mail_navigation.html",
+				headers: {
+        			"X-User-Token": SessionValue
+   				},
 				context: document.body,
 				contentType:"text/html",
 				success: function(response){

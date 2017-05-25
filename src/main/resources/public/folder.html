@@ -7,8 +7,13 @@
 		<script type="text/javascript" src="javascript.js"></script>
 		<script>
 			$(function(){
+				var SessionValue = sessionStorage.getItem(TOKEN); 
+					
 				$.ajax({
 				  url: "mail_navigation.html",
+				  headers: {
+		        		"X-User-Token": SessionValue
+		   		  },
 				  context: document.body,
 				  contentType:"text/html",
 				  beforeSend: function() {
