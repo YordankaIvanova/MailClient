@@ -23,8 +23,9 @@ $(document).ready(function() {
 	}
 
 	$("#signin_btn").on('click', function() {
+		var signInButton = $(this);
 		var isLoginInfoValid = true;
-		$(this).text("Authenticating...");
+		signInButton.text("Authenticating...");
 
 		var userNameFieldValue = $("#username").val();
 		if(userNameFieldValue.length < 1) {
@@ -52,6 +53,9 @@ $(document).ready(function() {
 		}
 
 		if (isLoginInfoValid == true) {
+			// Make button unclickable
+			signInButton.disabled = true;
+
 			sessionStorage.setItem(USERNAME, userNameFieldValue);
 			var loginInf = serializeObject($("#login_form > form"));
 			var jsonString = JSON.stringify(loginInf);
@@ -67,9 +71,12 @@ $(document).ready(function() {
 						location.href = "folder.html";
 					},
 					error: function(xhr, status, error) {
-						$(this).text("Sign in");
-	                    var errorMessage = $.parseJSON(xhr.responseJSON);
+						signInButton.text("Sign in");
+	                    var errorMessage = $.parseJSON(xhr.responseText);
 	                    $("#error").html(errorMessage.error);
+	                },
+	                complete: function() {
+	                	signInButton.disabled = false;
 	                }
 			});
 		}

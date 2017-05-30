@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.SendFailedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,7 +77,7 @@ public class MailMessagesController {
 	public ResponseEntity<String> getMessagesfromMailBox(
 			@RequestParam(name = FOLDER_NAME_PROPERTY, defaultValue = "inbox") String folderName,
 			@RequestParam(name = PAGE_PROPERTY, defaultValue = "0") int page,
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken) {
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 
 		JavaMailReader javaMailReader = new JavaMailReader();
 		ResponseEntity<String> response = null;
@@ -122,7 +121,7 @@ public class MailMessagesController {
 	public ResponseEntity<String> setMessagesAsRead(
 			@RequestParam(name = FOLDER_NAME_PROPERTY) String folderName,
 			@RequestParam(name = MESSAGES_IDS_LIST_PROPERTY) String messagesIdsAsJsonArray,
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken) {
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 
 		return setMessagesSeenFlag(userToken, folderName, messagesIdsAsJsonArray, true);
 	}
@@ -146,7 +145,7 @@ public class MailMessagesController {
 	public ResponseEntity<String> setMessagesAsUnread(
 			@RequestParam(name = FOLDER_NAME_PROPERTY) String folderName,
 			@RequestParam(name = MESSAGES_IDS_LIST_PROPERTY) String messagesIds,
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken) {
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 
 		return setMessagesSeenFlag(userToken, folderName, messagesIds, false);
 	}
@@ -168,7 +167,7 @@ public class MailMessagesController {
 	public ResponseEntity<String> getMessageFromFolder(
 			@RequestParam(name = MESSAGE_ID_PROPERTY) long messageId,
 			@RequestParam(name = FOLDER_NAME_PROPERTY) String folderName,
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken) {
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 		JavaMailReader javaMailReader = new JavaMailReader();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "text/plain");
@@ -204,7 +203,7 @@ public class MailMessagesController {
 	 */
 	@RequestMapping("/folders/base")
 	public ResponseEntity<String> getBaseFoldersData(
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken) {
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 		JavaMailReader javaMailReader = new JavaMailReader();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -235,7 +234,7 @@ public class MailMessagesController {
 
 	@RequestMapping(value = "/mail/send", method = RequestMethod.PUT)
 	public ResponseEntity<String> writeMailMessage(
-			@RequestHeader(value = HttpUtils.USER_TOKEN_HTTP_HEADER_NAME, defaultValue = "") String userToken,
+			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken,
 			@RequestBody MailMessage mailMessage) {
 
 		ResponseEntity<String> response = null;

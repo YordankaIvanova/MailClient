@@ -19,19 +19,8 @@ import com.iv.dani.mail.data.UserLoginData;
 //TODO javadoc and logging
 @Component
 public class JavaMailWriter {
-	// FIXME: remove
-	private static final UserLoginData DEFAULT_USER =
-			new UserLoginData(
-					"miroslav.shtarbev@gmail.com",
-					"miro17protoBG",
-					"imap.gmail.com",
-					"smtp.gmail.com");
 
 	public void sendMessage(UserLoginData userLoginData, MailMessage message) throws MessagingException {
-		if (userLoginData == null) {
-			userLoginData = DEFAULT_USER;
-		}
-
 		Session mailConnection = Session.getInstance(new Properties());
 		MimeMessage emailMessage = new MimeMessage(mailConnection);
 
@@ -47,7 +36,11 @@ public class JavaMailWriter {
 		Transport transport = null;
 		try {
 			transport = mailConnection.getTransport("smtps");
-			transport.connect(userLoginData.getSmtpHost(), DEFAULT_USER.getUsername(), DEFAULT_USER.getPassword());
+			transport.connect(
+					userLoginData.getSmtpHost(),
+					userLoginData.getUsername(),
+					userLoginData.getPassword());
+
 			transport.sendMessage(emailMessage, emailMessage.getAllRecipients());
 		} finally {
 			if (transport != null) {
