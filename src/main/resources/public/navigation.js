@@ -1,6 +1,7 @@
 const NAV_FOLDERS_SESSION_PROPERTY_NAME = "nav_folders";
 const DELAY = 5000;
 const REPEAT_INTERVAL = 7500;
+var timer_id = -1;
 
 $(document).ready(function() {
 	var token = sessionStorage.getItem(TOKEN);
@@ -54,9 +55,13 @@ function readFoldersData() {
 		success: function(result) {
 			sessionStorage.setItem(NAV_FOLDERS_SESSION_PROPERTY_NAME, result);
 			renderFoldersData();
+			timer_id = setTimeout(readFoldersData, REPEAT_INTERVAL);
 		},
-		complete: function() {
-			setTimeout(readFoldersData, REPEAT_INTERVAL);
+		error: function(jqXHR) {
+			// Unauthorized
+			if (jqXHR.status == 401) {
+				clearTimeout(timer_id);
+			}
 		}
 	});
 }

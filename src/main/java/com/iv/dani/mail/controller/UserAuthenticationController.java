@@ -58,7 +58,7 @@ public class UserAuthenticationController {
 			_userSessionStore.removeUserSession(userToken);
 			response = _httpUtils.createMessagePlainTextResponse("User logged out.", HttpStatus.OK);
 		} catch (IllegalStateException e) {
-			response = _httpUtils.createErrorPlainTextResponse("No user is authenticated!", HttpStatus.BAD_REQUEST);
+			response = _httpUtils.createErrorPlainTextResponse("User already logged out!", HttpStatus.OK);
 		} finally {
 			mailReader.close();
 		}
@@ -71,7 +71,14 @@ public class UserAuthenticationController {
 			@RequestHeader(HttpUtils.USER_TOKEN_HTTP_HEADER_NAME) String userToken) {
 		ResponseEntity<String> response = null;
 
-		boolean isValid = _userSessionStore.getUserSession(userToken) != null;
+
+		boolean isValid = false;
+		try {
+		isValid = _userSessionStore.getUserSession(userToken) != null;
+		} catch (IllegalStateException e) {
+			isValid = false;
+		}
+
 		response = _httpUtils.createSuccessJsonResponse(String.format(VALID_TOKEN_TEMPLATE, isValid));
 
 		return response;

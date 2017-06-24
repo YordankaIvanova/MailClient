@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.iv.dani.mail.data.UserLoginData;
@@ -15,7 +16,10 @@ import com.iv.dani.mail.data.UserLoginData;
  */
 @Component
 public class UserSessionStore {
-	private Map<String, UserLoginData> _userSessionStore = new ConcurrentHashMap<String, UserLoginData>();
+	private static final int TTL_DELAY = 1 * 60 * 1000; // 1min
+	private static final int TOKEN_TTL = 15;
+
+	private Map<String, UserSession> _userSessionStore = new ConcurrentHashMap<String, UserSession>();
 
 	/**
 	 * Методът съхранява потребителската информация и издава токен, чрез който
@@ -25,9 +29,10 @@ public class UserSessionStore {
 	 *            Потребителската информация при автентикиране.
 	 * @return Токен, чрез който се идентифицира потребителската информация.
 	 */
-	public String createUserSession(UserLoginData userLoginData) {
+	public synchronized String createUserSession(UserLoginData userLoginData) {
 		String newUserToken = requestToken();
-		_userSessionStore.put(newUserToken, userLoginData);
+		UserSession userSession = new UserSession(userLoginData);
+		_userSessionStore.put(newUserToken, userSession);
 
 		return newUserToken;
 	}
@@ -40,8 +45,14 @@ public class UserSessionStore {
 	 *            Потребителският токен.
 	 * @return Потребителската информация при автенктикиране.
 	 */
-	public UserLoginData getUserSession(String userToken) {
-		return _userSessionStore.get(userToken);
+	public synchronized UserLoginData getUserSession(String userToken) {
+		UserSession userSession = _userSessionStore.get(userToken);
+		if (userSession == null) {
+			throw new IllegalStateException("User token not found.");
+		}
+
+		userSession.resetTtl();
+		return userSession.getUserLoginData();
 	}
 
 	/**
@@ -50,18 +61,54 @@ public class UserSessionStore {
 	 *
 	 * @param userToken
 	 *            Потребителският токен.
-	 * @throws IllegalStateException
-	 *             Ако не е намерена потребителска информация, на която
-	 *             съответства токена.
 	 */
-	public void removeUserSession(String userToken) throws IllegalStateException {
-		UserLoginData userLoginData = _userSessionStore.remove(userToken);
-		if (userLoginData == null) {
-			throw new IllegalStateException("No such user exists.");
+	public synchronized void removeUserSession(String userToken) throws IllegalStateException {
+		UserSession userSession = _userSessionStore.remove(userToken);
+		if (userSession == null) {
+			throw new IllegalStateException("User token not found.");
 		}
 	}
 
 	private String requestToken() {
 		return UUID.randomUUID().toString();
+	}
+
+	@Scheduled(fixedDelay = TTL_DELAY)
+	private void checkForExpiredTokens() {
+		for (Map.Entry<String, UserSession> sessionData : _userSessionStore.entrySet()) {
+			String token = sessionData.getKey();
+			UserSession userSession = sessionData.getValue();
+
+			userSession.diminishTtl();
+			if (userSession.isExpired()) {
+				removeUserSession(token);
+			}
+		}
+	}
+
+	private static final class UserSession {
+		private final UserLoginData _userLoginData;
+		private int _ttl;
+
+		public UserSession(UserLoginData userLoginData) {
+			_userLoginData = userLoginData;
+			resetTtl();
+		}
+
+		public UserLoginData getUserLoginData() {
+			return _userLoginData;
+		}
+
+		public void diminishTtl() {
+			_ttl--;
+		}
+
+		public void resetTtl() {
+			_ttl = TOKEN_TTL;
+		}
+
+		public boolean isExpired() {
+			return _ttl == 0;
+		}
 	}
 }

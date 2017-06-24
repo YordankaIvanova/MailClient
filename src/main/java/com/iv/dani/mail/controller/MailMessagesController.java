@@ -96,6 +96,10 @@ public class MailMessagesController {
 			response = _httpUtils.createErrorPlainTextResponse(
 					"Could not process message content.",
 					HttpStatus.NOT_FOUND);
+		} catch (IllegalStateException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Session Expired.",
+					HttpStatus.UNAUTHORIZED);
 		} finally {
 			javaMailReader.close();
 		}
@@ -183,6 +187,10 @@ public class MailMessagesController {
 			response = _httpUtils.createErrorPlainTextResponse(
 					"Message not found.",
 					HttpStatus.NOT_FOUND);
+		} catch (IllegalStateException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Session Expired.",
+					HttpStatus.UNAUTHORIZED);
 		} finally {
 			javaMailReader.close();
 		}
@@ -225,6 +233,10 @@ public class MailMessagesController {
 			response = _httpUtils.createErrorPlainTextResponse(
 					"Folder data could not be processes.",
 					HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (IllegalStateException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Session Expired.",
+					HttpStatus.UNAUTHORIZED);
 		} finally {
 			javaMailReader.close();
 		}
@@ -241,6 +253,10 @@ public class MailMessagesController {
 		try {
 			_mailwriter.sendMessage(_userSessionStore.getUserSession(userToken), mailMessage);
 			response = _httpUtils.createMessagePlainTextResponse("Message successfully sent", HttpStatus.OK);
+		} catch (IllegalStateException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Session Expired.",
+					HttpStatus.UNAUTHORIZED);
 		} catch (MessagingException e) {
 			//FIXME logging.
 			e.printStackTrace();
@@ -291,6 +307,10 @@ public class MailMessagesController {
 			response = _httpUtils.createErrorPlainTextResponse(
 					"Failed to change message flags.",
 					HttpStatus.BAD_REQUEST);
+		} catch (IllegalStateException e) {
+			response = _httpUtils.createErrorPlainTextResponse(
+					"Session Expired.",
+					HttpStatus.UNAUTHORIZED);
 		} finally {
 			javaMailReader.close();
 		}
