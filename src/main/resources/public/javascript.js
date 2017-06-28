@@ -163,35 +163,44 @@ function generateManageMailMenu() {
 		var optionSelected = $("option:selected", this);
 	    var valueSelected = this.value;
 	    var idsAsJSON = getIDsOfSelectedMailsAsJSON();
+	    var SessionValue = sessionStorage.getItem(TOKEN);
 	    if(valueSelected == "markRead") {
-			$.post("/messages/mark/read?" + getCurrentFolderParameter()
-					+ "&ids=" + idsAsJSON)
-					.done(function() {
-						var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
-						selectedMails.removeClass("unread");
-						selectedMails.addClass("read");
-					}).fail(function(jqXHR) {
-						// Unauthorized
-						if (jqXHR.status == 401) {
-							location.href = "login.html";
-							sessionStorage.clear();
-						}
-					});
+    		$.ajax({
+				url: "/messages/mark/read?" + getCurrentFolderParameter() + "ids=" + idsAsJSON,
+				type: "POST",
+				headers: {
+	        		"X-User-Token": SessionValue
+	        	}
+   		    }).done(function() {
+				var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
+				selectedMails.removeClass("unread");
+				selectedMails.addClass("read");
+			}).fail(function(jqXHR) {
+				// Unauthorized
+				if (jqXHR.status == 401) {
+					location.href = "login.html";
+					sessionStorage.clear();
+				}
+			});
 
 	    } else if(valueSelected == "markUnread") {
-	    	$.post("/messages/mark/unread?" + getCurrentFolderParameter()
-					+ "&ids=" + idsAsJSON)
-					.done(function() {
-						var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
-						selectedMails.removeClass("read");
-						selectedMails.addClass("unread");
-					}).fail(function(jqXHR) {
-						// Unauthorized
-						if (jqXHR.status == 401) {
-							location.href = "login.html";
-							sessionStorage.clear();
-						}
-					});
+	    	$.ajax({
+				url: "/messages/mark/unread?" + getCurrentFolderParameter() + "ids=" + idsAsJSON,
+				type: "POST",
+				headers: {
+	        		"X-User-Token": SessionValue
+	        	}
+   		    }).done(function() {
+				var selectedMails = $("tr:has(input[name=rowCheckbox]:checked)");
+				selectedMails.removeClass("read");
+				selectedMails.addClass("unread");
+			}).fail(function(jqXHR) {
+				// Unauthorized
+				if (jqXHR.status == 401) {
+					location.href = "login.html";
+					sessionStorage.clear();
+				}
+			});
 	    }
 	});
 }
